@@ -1,0 +1,13 @@
+.borderBox {
+    border: 1px solid black;
+    padding: 5px;
+    margin: 5px;
+}
+
+.createBox {
+    width: 300px;
+}
+
+.timeBox {
+    display: flex;
+}
