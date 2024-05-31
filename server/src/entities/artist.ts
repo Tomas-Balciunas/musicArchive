@@ -32,14 +32,8 @@ export const artistSchema = validates<ArtistBare>().with({
   birth: z.date().nullable(),
 })
 
-export const artistInsertBandSchema = artistSchema
+export const artistInsertSchema = artistSchema
   .omit({ id: true })
   .extend({ bandId: z.number().int().positive() })
 
-export const artistInsertAlbumSchema = artistSchema.omit({ id: true }).extend({
-  albumId: z.number().int().positive(),
-  bandId: z.number().int().positive(),
-})
-
-export type ArtistBandInsert = z.infer<typeof artistInsertBandSchema>
-export type ArtistAlbumInsert = z.infer<typeof artistInsertAlbumSchema>
+export type ArtistInsert = z.infer<typeof artistInsertSchema>

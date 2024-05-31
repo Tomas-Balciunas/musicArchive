@@ -21,7 +21,7 @@ const submitLogin = () => {
 </script>
 
 <template>
-  <v-text-field type="email" v-model="userForm.email" placeholder="Email" />
+  <v-text-field type="email" v-model="userForm.email" placeholder="Email"/>
 
   <v-text-field
     type="password"

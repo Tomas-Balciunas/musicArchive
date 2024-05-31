@@ -1,12 +1,10 @@
 import { Song, songInsertSchema } from '@server/entities/song'
-import { publicProcedure } from '@server/trpc'
+import { authenticatedProcedure } from '@server/trpc/authenticatedProcedure'
 
-export default publicProcedure
+export default authenticatedProcedure
   .input(songInsertSchema)
   .mutation(async ({ input: song, ctx: { db } }) => {
     const createdSong = await db.getRepository(Song).save(song)
 
     return createdSong
   })
-
-  // change to authenticated procedure later!!!

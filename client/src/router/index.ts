@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { authenticate } from './guards'
 
 const routes = [
   {
@@ -8,6 +9,7 @@ const routes = [
   },
   {
     path: '/band/create',
+    beforeEnter: [authenticate],
     name: 'BandCreate',
     component: () => import('../views/BandCreateView.vue'),
   },
@@ -23,6 +25,7 @@ const routes = [
   },
   {
     path: '/album/review/:id',
+    beforeEnter: [authenticate],
     name: 'ReviewCreate',
     component: () => import('../views/ReviewCreateView.vue'),
   },

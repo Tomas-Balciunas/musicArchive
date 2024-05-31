@@ -1,14 +1,12 @@
 import { Post, postInsertSchema } from '@server/entities/post'
-import { publicProcedure } from '@server/trpc'
+import { authenticatedProcedure } from '@server/trpc/authenticatedProcedure'
 
-export default publicProcedure
-  .input(postInsertSchema)
-  .mutation(async ({ input: postData, ctx: { db } }) => {
-    const post = { ...postData }
+export default authenticatedProcedure
+  .input(postInsertSchema.omit({userId: true}))
+  .mutation(async ({ input: postData, ctx: { authUser, db } }) => {
+    const post = { ...postData, userId: authUser.id }
 
     const createdPost = await db.getRepository(Post).save(post)
 
     return createdPost
   })
-
-  // change to authenticated procedure later!!!

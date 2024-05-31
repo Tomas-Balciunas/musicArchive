@@ -5,9 +5,9 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
 import { DataType, newDb } from 'pg-mem'
 import * as entities from '../entities'
 
-export function createDatabase(
-  options: Partial<DataSourceOptions | { type: 'pg-mem' }> = {}
-) {
+type DatabaseOptions = Partial<DataSourceOptions> | { type: 'pg-mem' }
+
+export function createDatabase(options: DatabaseOptions) {
   // Run with an in-memory database.
   if (options.type === 'pg-mem') {
     return createMemoryDatabase()

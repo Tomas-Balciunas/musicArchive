@@ -9,12 +9,11 @@ import type {
 } from '@mono/server/src/shared/entities'
 import { useRoute } from 'vue-router'
 import { makeInsert, tryCatch } from '@/composables'
-import { authUserId } from '@/stores/user'
+import { isLoggedIn } from '@/stores/user'
 
 const band = ref<BandFull>()
 const route = useRoute()
 const bandId = Number(route.params.id)
-const userId = authUserId.value
 
 const albumForm = ref({
   title: '',
@@ -29,7 +28,7 @@ const postForm = ref({
   body: '',
 })
 
-const postInsert: Ref<PostInsert> = makeInsert(postForm.value, { bandId, userId })
+const postInsert: Ref<PostInsert> = makeInsert(postForm.value, { bandId })
 const albumInsert: Ref<AlbumInsert> = makeInsert(albumForm.value, { bandId })
 const artistInsert: Ref<ArtistBandInsert> = makeInsert(artistForm.value, { bandId })
 
@@ -41,7 +40,7 @@ const createAlbum = () => {
 
 const createArtist = () => {
   tryCatch(async () => {
-    await trpc.artist.createForBand.mutate(artistInsert.value)
+    await trpc.artist.create.mutate(artistInsert.value)
   })
 }
 
@@ -103,7 +102,7 @@ onBeforeMount(async () => {
       <h5 v-else>No comments found.</h5>
     </div>
 
-    <div class="d-flex">
+    <div class="d-flex" v-if="isLoggedIn">
       <div class="borderBox createBox">
         <form @submit.prevent="createComment">
           <p class="text-center">Add comment</p>

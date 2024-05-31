@@ -6,5 +6,8 @@
   "workspaces": [
     "client",
     "server"
-  ]
+  ],
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  }
 }

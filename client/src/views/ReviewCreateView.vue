@@ -2,15 +2,12 @@
 import { trpc } from '@/trpc'
 import { useRoute } from 'vue-router'
 import { onBeforeMount, ref } from 'vue'
-import { authUserId } from '@/stores/user'
 import type { ReviewInsert } from '@mono/server/src/shared/entities'
 import type { Ref } from 'vue'
 import { makeInsert, tryCatch } from '@/composables'
 
 const route = useRoute()
 const albumId = Number(route.params.id)
-const userId = authUserId.value as number
-
 const info = ref()
 const reviewForm = ref({
   title: '',
@@ -18,7 +15,7 @@ const reviewForm = ref({
   score: null,
 })
 
-const reviewInsert: Ref<ReviewInsert> = makeInsert(reviewForm.value, { albumId, userId })
+const reviewInsert: Ref<ReviewInsert> = makeInsert(reviewForm.value, { albumId })
 
 const createReview = () => {
   tryCatch(async () => {

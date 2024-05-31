@@ -1,7 +1,7 @@
 import { Band, bandInsertSchema } from '@server/entities/band'
-import { publicProcedure } from '@server/trpc'
+import { authenticatedProcedure } from '@server/trpc/authenticatedProcedure'
 
-export default publicProcedure
+export default authenticatedProcedure
   .input(bandInsertSchema)
   .mutation(async ({ input: bandData, ctx: { db } }) => {
     const band = { ...bandData }
@@ -11,4 +11,3 @@ export default publicProcedure
     return createdBand
   })
 
-// change to authenticated procedure later!!!

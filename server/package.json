@@ -7,9 +7,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json && npx tsc-alias",
     "build:tsup": "tsup src/index.ts",
-    "coverage": "vitest run --coverage",
+    "coverage": "cross-env DB_TYPE=pg-mem vitest run --coverage",
     "dev": "tsx watch src",
-    "dev:mem": "DB_TYPE=pg-mem tsx watch src",
+    "dev:mem": "cross-env DB_TYPE=pg-mem tsx watch src",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
     "migration:create": "node ./src/database/cli/index.mjs migration:create ./src/database/migrations/@0",
@@ -21,7 +21,7 @@
     "start:tsx": "tsx src",
     "test": "npm run test:mem",
     "test:db": "vitest --no-file-parallelism --maxWorkers 1",
-    "test:mem": "DB_TYPE=pg-mem vitest",
+    "test:mem": "cross-env DB_TYPE=pg-mem vitest",
     "typecheck": "tsc --noEmit",
     "typeorm": "tsx ../node_modules/typeorm/cli.js"
   },

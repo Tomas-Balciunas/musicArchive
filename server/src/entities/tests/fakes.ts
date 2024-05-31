@@ -1,4 +1,7 @@
 import type { User } from '@server/entities/user'
+import { Album } from '../album'
+import { Band } from '../band'
+import { Review } from '../review'
 import { random } from './random'
 
 const randomId = () => random.integer({ min: 1, max: 2147483647 })
@@ -9,31 +12,33 @@ const randomId = () => random.integer({ min: 1, max: 2147483647 })
  */
 export const fakeUser = <T extends Partial<User>>(overrides: T = {} as T) => ({
   id: randomId(),
+  username: 'User Name',
   email: random.email(),
   password: 'Password.123!',
   ...overrides,
 })
 
-/**
- * Generates a fake project with some default test data.
- * @param overrides Any properties that should be different from default fake data.
- */
-// export const fakeProject = <T extends Partial<Project>>(
-//   overrides: T = {} as T
-// ) => ({
-//   id: randomId(),
-//   name: random.string(),
-//   ...overrides,
-// })
+export const fakeAlbum = <T extends Partial<Album>>(
+  overrides: T = {} as T
+) => ({
+  id: randomId(),
+  title: random.string(),
+  ...overrides,
+})
 
-/**
- * Generates a fake bug with some default test data.
- * @param overrides Any properties that should be different from default fake data.
- */
-// export const fakeBug = <T extends Partial<Bug>>(overrides: T = {} as T) => ({
-//   id: randomId(),
-//   name: 'OurFakeError',
-//   code: '500',
-//   stacktrace: 'Error: OurFakeError\n    at <anonymous>:1:1',
-//   ...overrides,
-// })
+export const fakeBand = <T extends Partial<Band>>(overrides: T = {} as T) => ({
+  id: randomId(),
+  name: random.string(),
+  description: 'Description text',
+  ...overrides,
+})
+
+export const fakeReview = <T extends Partial<Review>>(
+  overrides: T = {} as T
+) => ({
+  id: randomId(),
+  title: random.string(),
+  body: random.string(),
+  score: random.integer({ min: 1, max: 100 }),
+  ...overrides,
+})

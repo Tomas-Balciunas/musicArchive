@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { computed, onBeforeMount, ref } from 'vue'
 import { type AlbumFull } from '@mono/server/src/shared/entities'
 import { tryCatch } from '@/composables'
+import { isLoggedIn } from '@/stores/user'
 
 const route = useRoute()
 const album = ref<AlbumFull>()
@@ -80,7 +81,7 @@ onBeforeMount(async () => {
       <h5 v-else>No reviews found</h5>
     </div>
 
-    <div class="borderBox createBox">
+    <div class="borderBox createBox" v-if="isLoggedIn">
       <form @submit.prevent="createSong">
         <p class="text-center">Add song</p>
         <div>
@@ -107,11 +108,13 @@ onBeforeMount(async () => {
       </form>
     </div>
 
-    <RouterLink :to="{ name: 'ReviewCreate', params: { id: albumId } }">
-      <div class="gap-3">
-        <v-btn type="submit" color="#C62828">Write a review</v-btn>
-      </div>
-    </RouterLink>
+    <div v-if="isLoggedIn">
+      <RouterLink :to="{ name: 'ReviewCreate', params: { id: albumId } }">
+        <div class="gap-3">
+          <v-btn type="submit" color="#C62828">Write a review</v-btn>
+        </div>
+      </RouterLink>
+    </div>
   </div>
 </template>
 

@@ -15,6 +15,7 @@ function logoutUser() {
     <div v-if="!isLoggedIn">
       <RouterLink :to="{ name: 'Login' }"><v-btn color="#00897B">Login</v-btn></RouterLink>
       <RouterLink :to="{ name: 'Signup' }"><v-btn color="#00897B">Sign Up</v-btn></RouterLink>
+      <RouterLink :to="{ name: 'Home' }"><v-btn color="#00897B">Home</v-btn></RouterLink>
     </div>
     <div v-else>
       <span>User id: {{ user }}</span>

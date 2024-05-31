@@ -1,9 +1,9 @@
 import { Artist } from '@server/entities'
 import { Album, albumInsertSchema } from '@server/entities/album'
-import { publicProcedure } from '@server/trpc'
+import { authenticatedProcedure } from '@server/trpc/authenticatedProcedure'
 import { In } from 'typeorm'
 
-export default publicProcedure
+export default authenticatedProcedure
   .input(albumInsertSchema)
   .mutation(async ({ input, ctx: { db } }) => {
     const { albumArtists, ...albumData } = input
@@ -23,5 +23,3 @@ export default publicProcedure
 
     return createdAlbum
   })
-
-// change to authenticated procedure later!!!
