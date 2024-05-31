@@ -39,11 +39,12 @@ onBeforeMount(async () => {
     >
 
     <form @submit.prevent="createReview">
-      <v-text-field v-model="reviewForm.title" variant="solo-filled"></v-text-field>
-      <v-textarea v-model="reviewForm.body" variant="solo-filled"></v-textarea>
+      <v-text-field label="Title" v-model="reviewForm.title" variant="solo-filled"></v-text-field>
+      <v-textarea label="Content" v-model="reviewForm.body" variant="solo-filled"></v-textarea>
       <VNumberInput
+        label="Score (1 to 100)"
         type="number"
-        :min="0"
+        :min="1"
         :max="100"
         prefix="%"
         v-model="reviewForm.score"

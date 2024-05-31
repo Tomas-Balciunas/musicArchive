@@ -90,7 +90,8 @@ onBeforeMount(async () => {
           <div class="commentBox">
             <div>
               <span
-                >{{ post.user.username }} {{ String(post.createdAt).slice(0, 19).replace('T', ' ') }}</span
+                >{{ post.user.username }}
+                {{ String(post.createdAt).slice(0, 19).replace('T', ' ') }}</span
               >
             </div>
             <div>
@@ -105,7 +106,7 @@ onBeforeMount(async () => {
     <div class="d-flex" v-if="isLoggedIn">
       <div class="borderBox createBox">
         <form @submit.prevent="createComment">
-          <p class="text-center">Add comment</p>
+          <p class="text-center">Add user comment</p>
           <div>
             <v-textarea variant="solo-filled" v-model="postForm.body"></v-textarea>
           </div>
@@ -123,15 +124,19 @@ onBeforeMount(async () => {
             <v-text-field label="Album title" variant="solo-filled" v-model="albumForm.title" />
           </div>
 
-          <div v-for="artist in band.artists" :key="artist.id">
-            <v-checkbox
-              hide-details
-              density="compact"
-              v-model="albumForm.albumArtists"
-              :label="artist.name"
-              :value="artist.id"
-            ></v-checkbox>
+          <p>Artist line-up (optional):</p>
+          <div v-if="band.artists.length">
+            <div v-for="artist in band.artists" :key="artist.id">
+              <v-checkbox
+                hide-details
+                density="compact"
+                v-model="albumForm.albumArtists"
+                :label="artist.name"
+                :value="artist.id"
+              ></v-checkbox>
+            </div>
           </div>
+          <h5 v-else>No artists available</h5>
 
           <div>
             <v-btn type="submit" color="#C62828" class="basicBtn">Save</v-btn>
@@ -143,12 +148,12 @@ onBeforeMount(async () => {
         <form @submit.prevent="createArtist">
           <p class="text-center">Add artist</p>
           <div>
-            <v-text-field label="Artist's name" variant="solo-filled" v-model="artistForm.name" />
+            <v-text-field label="Name" variant="solo-filled" v-model="artistForm.name" />
           </div>
 
           <div>
             <v-date-input
-              label="Date input"
+              label="Birth date (optional)"
               v-model="artistForm.birth"
               clearable
               @click:clear="artistForm.birth = null"
