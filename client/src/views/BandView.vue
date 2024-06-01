@@ -4,7 +4,7 @@ import { onBeforeMount, ref, type Ref } from 'vue'
 import type {
   AlbumInsert,
   BandFull,
-  ArtistBandInsert,
+  ArtistInsert,
   PostInsert,
 } from '@mono/server/src/shared/entities'
 import { useRoute } from 'vue-router'
@@ -30,29 +30,35 @@ const postForm = ref({
 
 const postInsert: Ref<PostInsert> = makeInsert(postForm.value, { bandId })
 const albumInsert: Ref<AlbumInsert> = makeInsert(albumForm.value, { bandId })
-const artistInsert: Ref<ArtistBandInsert> = makeInsert(artistForm.value, { bandId })
+const artistInsert: Ref<ArtistInsert> = makeInsert(artistForm.value, { bandId })
 
 const createAlbum = () => {
   tryCatch(async () => {
     await trpc.album.create.mutate(albumInsert.value)
+    await updateBand()
   })
 }
 
 const createArtist = () => {
   tryCatch(async () => {
     await trpc.artist.create.mutate(artistInsert.value)
+    await updateBand()
   })
 }
 
 const createComment = () => {
   tryCatch(async () => {
     await trpc.post.create.mutate(postInsert.value)
+    await updateBand()
   })
 }
 
+const updateBand = async () => {
+  band.value = await trpc.band.get.query(bandId)
+}
+
 onBeforeMount(async () => {
-  const result = await trpc.band.get.query(bandId)
-  band.value = result
+  await updateBand()
 })
 </script>
 

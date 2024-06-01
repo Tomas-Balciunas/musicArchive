@@ -17,7 +17,8 @@ const toSeconds = computed(() => {
 const toMinutes = (duration: number) => {
   const min = Math.floor(duration / 60)
   const sec = duration % 60
-  return `${min}:${sec}`
+
+  return `${min < 10 ? '0' + min : min}:${sec < 10 ? '0' + sec : sec}`
 }
 
 const songTime = ref({
@@ -34,12 +35,16 @@ const songForm = ref({
 const createSong = () => {
   tryCatch(async () => {
     await trpc.song.create.mutate(songForm.value)
+    await updateAlbum()
   })
 }
 
+const updateAlbum = async () => {
+  album.value = await trpc.album.get.query(albumId)
+}
+
 onBeforeMount(async () => {
-  const result = await trpc.album.get.query(albumId)
-  album.value = result
+  await updateAlbum()
 })
 </script>
 
