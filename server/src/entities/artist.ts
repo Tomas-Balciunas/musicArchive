@@ -20,11 +20,14 @@ export class Artist {
   })
   bands: Band[]
 
-  @ManyToMany(() => Album, (album) => album.artists)
+  @ManyToMany(() => Album, (albums) => albums.artists, {
+    onDelete: 'CASCADE',
+  })
   albums: Album[]
 }
 
 export type ArtistBare = Omit<Artist, 'bands' | 'albums'>
+export type ArtistFull = Artist
 
 export const artistSchema = validates<ArtistBare>().with({
   id: z.number().int().positive(),
@@ -32,8 +35,22 @@ export const artistSchema = validates<ArtistBare>().with({
   birth: z.date().nullable(),
 })
 
+export const artistSearchSchema = artistSchema
+  .pick({ name: true })
+  .extend({
+    name: z.string(),
+    albumId: z.number().int().positive().optional(),
+    bandId: z.number().int().positive().optional(),
+  })
+
 export const artistInsertSchema = artistSchema
   .omit({ id: true })
   .extend({ bandId: z.number().int().positive() })
+
+export const artistAddSchema = z.object({
+  albumId: z.number().int().positive().optional(),
+  bandId: z.number().int().positive().optional(),
+  artistId: z.number().int().positive(),
+})
 
 export type ArtistInsert = z.infer<typeof artistInsertSchema>

@@ -44,6 +44,11 @@ const routes = [
     name: 'Signup',
     component: () => import('../views/SignupView.vue'),
   },
+  {
+    path: '/artist/:id',
+    name: 'Artist',
+    component: () => import('../views/ArtistView.vue')
+  },
 ]
 
 const router = createRouter({

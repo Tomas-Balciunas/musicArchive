@@ -40,7 +40,7 @@ export class Album {
   @JoinTable()
   reviews: Review[]
 
-  @ManyToMany(() => Artist, {
+  @ManyToMany(() => Artist, (artists) => artists.albums, {
     cascade: ['insert', 'update'],
   })
   @JoinTable({
@@ -68,6 +68,6 @@ export const albumSchema = validates<AlbumBare>().with({
 
 export const albumInsertSchema = albumSchema
   .omit({ id: true })
-  .extend({ albumArtists: z.array(z.number().int().positive()) })
+  .extend({ artistList: z.array(z.number().int().positive()) })
 
 export type AlbumInsert = z.infer<typeof albumInsertSchema>

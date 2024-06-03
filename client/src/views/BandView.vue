@@ -6,6 +6,7 @@ import type {
   BandFull,
   ArtistInsert,
   PostInsert,
+ArtistBare,
 } from '@mono/server/src/shared/entities'
 import { useRoute } from 'vue-router'
 import { makeInsert, tryCatch } from '@/composables'
@@ -17,7 +18,7 @@ const bandId = Number(route.params.id)
 
 const albumForm = ref({
   title: '',
-  albumArtists: [],
+  artistList: [],
 })
 const artistForm = ref({
   name: '',
@@ -27,6 +28,9 @@ const artistForm = ref({
 const postForm = ref({
   body: '',
 })
+
+const searchResults = ref<ArtistBare[]>([])
+const searchForm = ref('')
 
 const postInsert: Ref<PostInsert> = makeInsert(postForm.value, { bandId })
 const albumInsert: Ref<AlbumInsert> = makeInsert(albumForm.value, { bandId })
@@ -46,11 +50,26 @@ const createArtist = () => {
   })
 }
 
+const addArtist = async (artistId: number) => {
+  await trpc.artist.add.mutate({ bandId, artistId })
+  await updateBand()
+  searchForm.value = ''
+  searchResults.value = []
+}
+
 const createComment = () => {
   tryCatch(async () => {
     await trpc.post.create.mutate(postInsert.value)
     await updateBand()
   })
+}
+
+const search = async () => {
+  if (searchForm.value === '') {
+    searchResults.value = []
+  } else {
+    searchResults.value = await trpc.artist.search.query({ name: searchForm.value, bandId })
+  }
 }
 
 const updateBand = async () => {
@@ -72,7 +91,9 @@ onBeforeMount(async () => {
     <div v-if="band.artists.length" class="borderBox">
       <h3>Artists</h3>
       <div v-for="artist in band.artists" :key="artist.id">
-        <p>{{ artist.name }}, Birth date: {{ artist.birth ?? 'N/A' }}</p>
+        <RouterLink :to="{ name: 'Artist', params: { id: artist.id } }">
+          <p>{{ artist.name }}</p>
+        </RouterLink>
       </div>
     </div>
     <h5 v-else>No artists found.</h5>
@@ -125,7 +146,7 @@ onBeforeMount(async () => {
 
       <div class="borderBox createBox">
         <form @submit.prevent="createAlbum">
-          <p class="text-center">Add album</p>
+          <p class="text-center">Create album</p>
           <div>
             <v-text-field label="Album title" variant="solo-filled" v-model="albumForm.title" />
           </div>
@@ -136,7 +157,7 @@ onBeforeMount(async () => {
               <v-checkbox
                 hide-details
                 density="compact"
-                v-model="albumForm.albumArtists"
+                v-model="albumForm.artistList"
                 :label="artist.name"
                 :value="artist.id"
               ></v-checkbox>
@@ -152,7 +173,7 @@ onBeforeMount(async () => {
 
       <div class="borderBox createBox">
         <form @submit.prevent="createArtist">
-          <p class="text-center">Add artist</p>
+          <p class="text-center">Create artist</p>
           <div>
             <v-text-field label="Name" variant="solo-filled" v-model="artistForm.name" />
           </div>
@@ -170,6 +191,23 @@ onBeforeMount(async () => {
             <v-btn type="submit" color="#C62828" class="basicBtn">Save</v-btn>
           </div>
         </form>
+      </div>
+
+      <div class="borderBox createBox">
+        <p class="text-center">Add artist</p>
+        <div>
+          <v-text-field
+            label="Search for artists"
+            variant="solo-filled"
+            v-model="searchForm"
+            @update:model-value="search"
+          />
+        </div>
+
+        <div v-for="artist in searchResults" :key="artist.id">
+          <span>{{ artist.name }}</span>
+          <v-btn type="button" color="#C62828" @click="addArtist(artist.id)">+</v-btn>
+        </div>
       </div>
     </div>
   </div>

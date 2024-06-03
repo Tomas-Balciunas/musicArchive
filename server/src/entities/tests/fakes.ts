@@ -2,6 +2,7 @@ import type { User } from '@server/entities/user'
 import { Album } from '../album'
 import { Band } from '../band'
 import { Review } from '../review'
+import { Artist } from '../artist'
 import { random } from './random'
 
 const randomId = () => random.integer({ min: 1, max: 2147483647 })
@@ -40,5 +41,14 @@ export const fakeReview = <T extends Partial<Review>>(
   title: random.string(),
   body: random.string(),
   score: random.integer({ min: 1, max: 100 }),
+  ...overrides,
+})
+
+export const fakeArtist = <T extends Partial<Artist>>(
+  overrides: T = {} as T
+) => ({
+  id: randomId(),
+  name: random.string(),
+  birth: random.date(),
   ...overrides,
 })
