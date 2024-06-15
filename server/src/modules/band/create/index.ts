@@ -1,7 +1,7 @@
 import { Band, bandInsertSchema } from '@server/entities/band'
-import { authenticatedProcedure } from '@server/trpc/authenticatedProcedure'
+import { authProcedure } from '@server/trpc/procedures'
 
-export default authenticatedProcedure
+export default authProcedure
   .input(bandInsertSchema)
   .mutation(async ({ input: bandData, ctx: { db } }) => {
     const band = { ...bandData }
@@ -10,4 +10,3 @@ export default authenticatedProcedure
 
     return createdBand
   })
-

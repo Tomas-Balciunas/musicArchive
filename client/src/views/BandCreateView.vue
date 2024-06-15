@@ -3,12 +3,17 @@ import { trpc } from '@/trpc'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { tryCatch } from '@/composables'
+import type { BandInsert } from '@mono/server/src/shared/entities'
+import { getCountryDataList } from 'countries-list'
+import { onBeforeMount } from 'vue'
 
 const router = useRouter()
-
-const bandForm = ref({
+const countryList = ref<string[]>([])
+const bandForm = ref<BandInsert>({
   name: '',
   description: '',
+  formed: null,
+  origin: '',
 })
 
 const createBand = () => {
@@ -18,6 +23,10 @@ const createBand = () => {
     router.push({ name: 'Home' })
   })
 }
+
+onBeforeMount(() => {
+  countryList.value = getCountryDataList().map((c) => c.name)
+})
 </script>
 
 <template>
@@ -41,6 +50,23 @@ const createBand = () => {
             variant="solo-filled"
             placeholder="Band description"
           />
+        </div>
+        <div class="mt-6">
+          <v-number-input
+            type="number"
+            v-model="bandForm.formed"
+            variant="solo-filled"
+            placeholder="Year formed in"
+          />
+        </div>
+        <div class="mt-6">
+          <v-select
+            clearable
+            v-model="bandForm.origin"
+            :items="countryList"
+            variant="solo-filled"
+            label="Country of origin"
+          ></v-select>
         </div>
       </div>
 

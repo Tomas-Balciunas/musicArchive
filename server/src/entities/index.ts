@@ -6,4 +6,5 @@ export { Band } from './band'
 export { Post } from './post'
 export { Review } from './review'
 export { Song } from './song'
-
+export { RequestBandUpdate } from './band/request_update'
+export { RequestAlbumCreate } from './album/request_create'

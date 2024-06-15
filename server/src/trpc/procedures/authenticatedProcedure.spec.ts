@@ -1,9 +1,9 @@
 import { authContext, requestContext } from '@tests/utils/context'
 import { createCallerFactory, router } from '..'
-import { authenticatedProcedure } from '.'
+import { authProcedure } from '.'
 
 const routes = router({
-  testCall: authenticatedProcedure.query(() => 'passed'),
+  testCall: authProcedure.query(() => 'passed'),
 })
 
 const createCaller = createCallerFactory(routes)

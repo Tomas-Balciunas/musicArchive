@@ -1,8 +1,8 @@
 import { Band } from '@server/entities'
 import { Artist, artistInsertSchema } from '@server/entities/artist'
-import { authenticatedProcedure } from '@server/trpc/authenticatedProcedure'
+import { authProcedure } from '@server/trpc/procedures'
 
-export default authenticatedProcedure
+export default authProcedure
   .input(artistInsertSchema)
   .mutation(async ({ input, ctx: { db } }) => {
     const { bandId, ...artist } = input

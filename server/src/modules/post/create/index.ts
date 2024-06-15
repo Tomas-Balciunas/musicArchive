@@ -1,8 +1,8 @@
 import { Post, postInsertSchema } from '@server/entities/post'
-import { authenticatedProcedure } from '@server/trpc/authenticatedProcedure'
+import { authProcedure } from '@server/trpc/procedures'
 
-export default authenticatedProcedure
-  .input(postInsertSchema.omit({userId: true}))
+export default authProcedure
+  .input(postInsertSchema.omit({ userId: true }))
   .mutation(async ({ input: postData, ctx: { authUser, db } }) => {
     const post = { ...postData, userId: authUser.id }
 

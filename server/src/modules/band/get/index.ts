@@ -14,7 +14,10 @@ export default publicProcedure
       },
       select: {
         albums: true,
-        artists: true,
+        artists: {
+          id: true,
+          name: true,
+        },
         posts: {
           id: true,
           body: true,

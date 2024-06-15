@@ -31,6 +31,8 @@ export const fakeBand = <T extends Partial<Band>>(overrides: T = {} as T) => ({
   id: randomId(),
   name: random.string(),
   description: 'Description text',
+  formed: 1999,
+  origin: 'Lithuania',
   ...overrides,
 })
 

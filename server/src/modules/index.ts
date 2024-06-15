@@ -14,7 +14,7 @@ export const appRouter = router({
   user,
   artist,
   review,
-  post
+  post,
 })
 
 export type AppRouter = typeof appRouter

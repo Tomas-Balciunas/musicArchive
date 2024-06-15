@@ -15,7 +15,9 @@ it('should create a band', async () => {
 
   const bandInsert = {
     name: 'Band Name',
-    description: 'Band desc'
+    description: 'Band desc',
+    formed: 2000,
+    origin: 'Lithuania'
   }
 
   const bandCreated = await create(bandInsert)

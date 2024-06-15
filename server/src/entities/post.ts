@@ -46,7 +46,7 @@ export const postSchema = validates<PostBare>().with({
   body: z.string().min(1),
   bandId: z.number().int().positive(),
   userId: z.number().int().positive(),
-  createdAt: z.date()
+  createdAt: z.date(),
 })
 
 export const postInsertSchema = postSchema.omit({ id: true, createdAt: true })

@@ -1,28 +1,28 @@
 import {
-    Column,
-    Entity,
-    PrimaryGeneratedColumn,
-    ManyToOne,
-    JoinTable
-  } from 'typeorm'
-import { z } from 'zod';
-import { validates } from '@server/utils/validation';
-import { User } from './user';
-import { Album } from './album';
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinTable,
+} from 'typeorm'
+import { z } from 'zod'
+import { validates } from '@server/utils/validation'
+import { User } from './user'
+import { Album } from './album'
 
 @Entity()
 export class Review {
   @PrimaryGeneratedColumn('increment')
-  id: number;
+  id: number
 
   @Column('text')
-  title: string;
+  title: string
 
   @Column('text')
-  body: string;
+  body: string
 
   @Column('integer')
-  score: number;
+  score: number
 
   @Column('integer')
   albumId: number
@@ -31,16 +31,16 @@ export class Review {
   userId: number
 
   @ManyToOne(() => User, {
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   })
   @JoinTable()
-  user: User;
+  user: User
 
   @ManyToOne(() => Album, {
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   })
   @JoinTable()
-  album: Album;
+  album: Album
 }
 
 export type ReviewBare = Omit<Review, 'user' | 'album'>
@@ -52,8 +52,8 @@ export const reviewSchema = validates<ReviewBare>().with({
   body: z.string().min(1), // change to a reasonable min value in deployment
   score: z.number().int().positive(),
   albumId: z.number().int().positive(),
-  userId: z.number().int().positive()
+  userId: z.number().int().positive(),
 })
 
-export const reviewInsertSchema = reviewSchema.omit({id: true})
+export const reviewInsertSchema = reviewSchema.omit({ id: true })
 export type ReviewInsert = z.infer<typeof reviewInsertSchema>

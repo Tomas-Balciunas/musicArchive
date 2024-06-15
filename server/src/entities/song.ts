@@ -23,7 +23,7 @@ export class Song {
   @Column('integer')
   albumId: number
 
-  @ManyToOne(() => Album, album => album.songs, {
+  @ManyToOne(() => Album, (album) => album.songs, {
     onDelete: 'CASCADE',
   })
   @JoinTable()
@@ -33,11 +33,11 @@ export class Song {
 export type SongBare = Omit<Song, 'album'>
 export type SongFull = Song
 
-const songSchema = validates<SongBare>().with({
+export const songSchema = validates<SongBare>().with({
   id: z.number().int().positive(),
   title: z.string().min(1).max(200),
   duration: z.number().int().positive(),
-  albumId: z.number().int().positive()
+  albumId: z.number().int().positive(),
 })
 
 export const songInsertSchema = songSchema.omit({ id: true })

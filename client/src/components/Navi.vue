@@ -16,11 +16,12 @@ function logoutUser() {
       <RouterLink :to="{ name: 'Login' }"><v-btn color="#00897B">Login</v-btn></RouterLink>
       <RouterLink :to="{ name: 'Signup' }"><v-btn color="#00897B">Sign Up</v-btn></RouterLink>
       <RouterLink :to="{ name: 'Home' }"><v-btn color="#00897B">Home</v-btn></RouterLink>
+      
     </div>
     <div v-else>
       <span>User id: {{ user }}</span>
       <v-btn color="#C62828" @click.prevent="logoutUser">Log out</v-btn>
-      <RouterLink :to="{ name: 'Home' }"><v-btn color="#00897B">Home</v-btn></RouterLink>
+      <RouterLink :to="{ name: 'Home' }"><v-btn color="#00897B">Home</v-btn></RouterLink><RouterLink :to="{ name: 'Requests' }"><v-btn color="#00897B">Requests</v-btn></RouterLink>
     </div>
   </div>
 </template>

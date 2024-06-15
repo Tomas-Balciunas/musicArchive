@@ -1,10 +1,10 @@
 import { Album, Band } from '@server/entities'
 import { Artist, artistSearchSchema } from '@server/entities/artist'
-import { authenticatedProcedure } from '@server/trpc/authenticatedProcedure'
+import { authProcedure } from '@server/trpc/procedures'
 import { TRPCError } from '@trpc/server'
 import { ILike, In, Not } from 'typeorm'
 
-export default authenticatedProcedure
+export default authProcedure
   .input(artistSearchSchema)
   .query(async ({ input, ctx: { db } }) => {
     const { name, albumId, bandId } = input

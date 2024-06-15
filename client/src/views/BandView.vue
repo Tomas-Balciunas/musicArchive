@@ -2,24 +2,19 @@
 import { trpc } from '@/trpc'
 import { onBeforeMount, ref, type Ref } from 'vue'
 import type {
-  AlbumInsert,
   BandFull,
   ArtistInsert,
   PostInsert,
-ArtistBare,
 } from '@mono/server/src/shared/entities'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { makeInsert, tryCatch } from '@/composables'
 import { isLoggedIn } from '@/stores/user'
 
 const band = ref<BandFull>()
 const route = useRoute()
+const router = useRouter()
 const bandId = Number(route.params.id)
 
-const albumForm = ref({
-  title: '',
-  artistList: [],
-})
 const artistForm = ref({
   name: '',
   birth: null,
@@ -29,32 +24,14 @@ const postForm = ref({
   body: '',
 })
 
-const searchResults = ref<ArtistBare[]>([])
-const searchForm = ref('')
-
 const postInsert: Ref<PostInsert> = makeInsert(postForm.value, { bandId })
-const albumInsert: Ref<AlbumInsert> = makeInsert(albumForm.value, { bandId })
 const artistInsert: Ref<ArtistInsert> = makeInsert(artistForm.value, { bandId })
-
-const createAlbum = () => {
-  tryCatch(async () => {
-    await trpc.album.create.mutate(albumInsert.value)
-    await updateBand()
-  })
-}
 
 const createArtist = () => {
   tryCatch(async () => {
     await trpc.artist.create.mutate(artistInsert.value)
     await updateBand()
   })
-}
-
-const addArtist = async (artistId: number) => {
-  await trpc.artist.add.mutate({ bandId, artistId })
-  await updateBand()
-  searchForm.value = ''
-  searchResults.value = []
 }
 
 const createComment = () => {
@@ -64,11 +41,10 @@ const createComment = () => {
   })
 }
 
-const search = async () => {
-  if (searchForm.value === '') {
-    searchResults.value = []
-  } else {
-    searchResults.value = await trpc.artist.search.query({ name: searchForm.value, bandId })
+const approveBand = async () => {
+  if (band.value) {
+    await trpc.band.status.mutate({ id: band.value.id, pending: false })
+    router.push({ name: 'Requests' })
   }
 }
 
@@ -83,22 +59,30 @@ onBeforeMount(async () => {
 
 <template>
   <div v-if="band">
+    <v-btn
+      ><RouterLink :to="{ name: 'BandUpdate', params: { id: bandId } }">Update</RouterLink></v-btn
+    >
+    <v-btn v-if="band.pending" @click.prevent="approveBand">Approve</v-btn>
     <div class="borderBox">
       <h1>{{ band.name }}</h1>
+      <h5>Formed in: {{ band.formed ?? 'N/A' }}</h5>
+      <h5>Originated in: {{ band.origin ?? 'N/A' }}</h5>
       <p>{{ band.description }}</p>
     </div>
 
-    <div v-if="band.artists.length" class="borderBox">
-      <h3>Artists</h3>
-      <div v-for="artist in band.artists" :key="artist.id">
-        <RouterLink :to="{ name: 'Artist', params: { id: artist.id } }">
-          <p>{{ artist.name }}</p>
-        </RouterLink>
+    <div v-if="!band.pending">
+      <div v-if="band.artists.length" class="borderBox">
+        <h3>Artists</h3>
+        <div v-for="artist in band.artists" :key="artist.id">
+          <RouterLink :to="{ name: 'Artist', params: { id: artist.id } }">
+            <p>{{ artist.name }}</p>
+          </RouterLink>
+        </div>
       </div>
+      <h5 v-else>No artists found.</h5>
     </div>
-    <h5 v-else>No artists found.</h5>
 
-    <div class="borderBox">
+    <div v-if="!band.pending" class="borderBox">
       <div v-if="band.albums.length">
         <h3>Albums</h3>
         <div v-for="album in band.albums" :key="album.id">
@@ -108,9 +92,10 @@ onBeforeMount(async () => {
         </div>
       </div>
       <h5 v-else>No albums found.</h5>
+      <v-btn><RouterLink :to="{name: 'AlbumCreate', params: {id: bandId}}">Add album</RouterLink></v-btn>
     </div>
 
-    <div class="borderBox">
+    <div v-if="!band.pending" class="borderBox">
       <div v-if="band.posts.length">
         <h3>Comments</h3>
         <div v-for="post in band.posts" :key="post.id">
@@ -130,40 +115,13 @@ onBeforeMount(async () => {
       <h5 v-else>No comments found.</h5>
     </div>
 
-    <div class="d-flex" v-if="isLoggedIn">
+    <div v-if="!band.pending && isLoggedIn" class="d-flex">
       <div class="borderBox createBox">
         <form @submit.prevent="createComment">
           <p class="text-center">Add user comment</p>
           <div>
             <v-textarea variant="solo-filled" v-model="postForm.body"></v-textarea>
           </div>
-
-          <div>
-            <v-btn type="submit" color="#C62828" class="basicBtn">Save</v-btn>
-          </div>
-        </form>
-      </div>
-
-      <div class="borderBox createBox">
-        <form @submit.prevent="createAlbum">
-          <p class="text-center">Create album</p>
-          <div>
-            <v-text-field label="Album title" variant="solo-filled" v-model="albumForm.title" />
-          </div>
-
-          <p>Artist line-up (optional):</p>
-          <div v-if="band.artists.length">
-            <div v-for="artist in band.artists" :key="artist.id">
-              <v-checkbox
-                hide-details
-                density="compact"
-                v-model="albumForm.artistList"
-                :label="artist.name"
-                :value="artist.id"
-              ></v-checkbox>
-            </div>
-          </div>
-          <h5 v-else>No artists available</h5>
 
           <div>
             <v-btn type="submit" color="#C62828" class="basicBtn">Save</v-btn>
@@ -191,23 +149,6 @@ onBeforeMount(async () => {
             <v-btn type="submit" color="#C62828" class="basicBtn">Save</v-btn>
           </div>
         </form>
-      </div>
-
-      <div class="borderBox createBox">
-        <p class="text-center">Add artist</p>
-        <div>
-          <v-text-field
-            label="Search for artists"
-            variant="solo-filled"
-            v-model="searchForm"
-            @update:model-value="search"
-          />
-        </div>
-
-        <div v-for="artist in searchResults" :key="artist.id">
-          <span>{{ artist.name }}</span>
-          <v-btn type="button" color="#C62828" @click="addArtist(artist.id)">+</v-btn>
-        </div>
       </div>
     </div>
   </div>

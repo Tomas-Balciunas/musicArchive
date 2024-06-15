@@ -11,7 +11,7 @@ it('should find all bands', async () => {
 
   const bands = await db
     .getRepository(Band)
-    .save([fakeBand(), fakeBand()])
+    .save([fakeBand({pending: false}), fakeBand({pending: false})])
 
   const { find } = createCaller({ db })
 

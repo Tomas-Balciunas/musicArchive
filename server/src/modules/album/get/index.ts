@@ -11,7 +11,7 @@ export default publicProcedure
         songs: true,
         band: true,
         artists: true,
-        reviews: true
+        reviews: true,
       },
     })) as AlbumFull
 

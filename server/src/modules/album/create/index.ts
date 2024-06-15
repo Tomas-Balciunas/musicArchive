@@ -1,9 +1,9 @@
 import { albumInsertSchema } from '@server/entities/album'
-import { authenticatedProcedure } from '@server/trpc/authenticatedProcedure'
 import { TRPCError } from '@trpc/server'
+import { authProcedure } from '@server/trpc/procedures'
 import { albumExists, createAlbum } from '../services'
 
-export default authenticatedProcedure
+export default authProcedure
   .input(albumInsertSchema)
   .mutation(async ({ input: albumData, ctx: { db } }) => {
     const exists = await albumExists(db, albumData)
