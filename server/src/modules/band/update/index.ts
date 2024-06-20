@@ -2,6 +2,7 @@ import { Artist } from '@server/entities/artist'
 import { Band, bandIdSchema, bandUpdateSchema } from '@server/entities/band'
 import { authProcedure } from '@server/trpc/procedures'
 import { In } from 'typeorm'
+import { updateBand } from '../services'
 
 export default authProcedure
   .input(
@@ -10,28 +11,8 @@ export default authProcedure
     })
   )
   .mutation(async ({ input, ctx: { db } }) => {
-    const { bandId, artists, ...data } = input
-    const arr = artists.map((a) => a.id)
-
-    const bandRepo = db.getRepository(Band)
-    const artistRepo = db.getRepository(Artist)
-
-    if (artists.length) {
-      const band = await bandRepo.findOne({
-        where: { id: bandId },
-        relations: { artists: true },
-      })
-      if (band) {
-        const list = await artistRepo.find({
-          where: { id: In(arr) },
-        })
-
-        list.forEach((a) => band.artists.push(a))
-        await bandRepo.save(band)
-      }
-    }
-
-    const updatedBand = await bandRepo.update({ id: bandId }, data)
+    const { bandId, ...data } = input
+    const updatedBand = updateBand(db, data, bandId)
 
     return updatedBand
   })

@@ -5,7 +5,6 @@ import findPending from './findPending'
 import create from './create'
 import update from './update'
 import status from './status'
-import request from './request'
 
 export default router({
   get,
@@ -14,5 +13,4 @@ export default router({
   create,
   update,
   status,
-  request,
 })

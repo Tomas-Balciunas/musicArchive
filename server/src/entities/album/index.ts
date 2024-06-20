@@ -9,10 +9,9 @@ import {
 import { validates } from '@server/utils/validation'
 import { z } from 'zod'
 import { Band } from '../band'
-import { Song } from '../song'
+import { Song, songSchema } from '../song'
 import { Review } from '../review'
-import { Artist } from '../artist'
-import { RequestAlbumCreate } from './request_create'
+import { Artist, artistSchema } from '../artist'
 import { AlbumClean } from './base'
 
 @Entity()
@@ -23,7 +22,9 @@ export class Album extends AlbumClean {
   @JoinColumn()
   band: Band
 
-  @OneToMany(() => Song, (songs) => songs.album)
+  @OneToMany(() => Song, (songs) => songs.album, {
+    cascade: ['insert', 'update'],
+  })
   @JoinTable()
   songs: Song[]
 
@@ -46,10 +47,6 @@ export class Album extends AlbumClean {
     },
   })
   artists: Artist[]
-
-  @OneToMany(() => RequestAlbumCreate, (createReqs) => createReqs.band)
-  @JoinTable()
-  createReqs: RequestAlbumCreate[]
 }
 
 export type AlbumBare = AlbumClean
@@ -64,17 +61,23 @@ export const albumSchema = validates<AlbumBare>().with({
 
 export const albumInsertSchema = albumSchema.omit({ id: true }).extend({
   artists: z.array(
-    z.object({
-      id: z.number().int().positive(),
-      name: z.string().min(1).max(200),
-    })
+    z.lazy(() => artistSchema.pick({ id: true, name: true }))
   ),
   songs: z.array(
-    z.object({
-      title: z.string().min(1).max(200),
-      duration: z.number().int().positive(),
-    })
+    z.lazy(() => songSchema.pick({ title: true, duration: true }))
   ),
 })
 
+export const albumUpdateSchema = albumSchema
+  .omit({ id: true, bandId: true })
+  .extend({
+    artists: z.array(
+      z.lazy(() => artistSchema.pick({ id: true, name: true }))
+    ),
+    songs: z.array(
+      z.lazy(() => songSchema.pick({ title: true, duration: true }))
+    ),
+  })
+
 export type AlbumInsert = z.infer<typeof albumInsertSchema>
+export type AlbumUpdate = z.infer<typeof albumUpdateSchema>

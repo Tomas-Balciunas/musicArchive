@@ -7,7 +7,7 @@ import {
 } from 'typeorm'
 import { z } from 'zod'
 import { validates } from '@server/utils/validation'
-import { Album } from './album'
+import { Album, albumSchema } from './album'
 
 @Entity()
 export class Song {
@@ -19,9 +19,6 @@ export class Song {
 
   @Column('integer')
   duration: number
-
-  @Column('integer')
-  albumId: number
 
   @ManyToOne(() => Album, (album) => album.songs, {
     onDelete: 'CASCADE',
@@ -37,9 +34,10 @@ export const songSchema = validates<SongBare>().with({
   id: z.number().int().positive(),
   title: z.string().min(1).max(200),
   duration: z.number().int().positive(),
-  albumId: z.number().int().positive(),
 })
 
-export const songInsertSchema = songSchema.omit({ id: true })
+export const songInsertSchema = songSchema
+  .omit({ id: true })
+  .extend({ album: z.lazy(() => albumSchema) })
 
 export type SongInsert = z.infer<typeof songInsertSchema>

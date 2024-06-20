@@ -4,8 +4,9 @@ import { onBeforeMount, ref } from 'vue'
 import type { ArtistBare, BandUpdate } from '@mono/server/src/shared/entities'
 import { getCountryDataList } from 'countries-list'
 import { useRoute } from 'vue-router'
+import { tryCatch } from '@/composables'
 
-const band = ref<Omit<BandUpdate, 'artists'>>()
+const band = ref()
 const currentArtists = ref()
 const route = useRoute()
 const bandId = Number(route.params.id)
@@ -39,11 +40,14 @@ function submitChanges() {
 
 function submitRequest() {
   if (band.value) {
-    trpc.band.request.update.create.mutate({
-      bandId,
-      artists: artistList.value,
-      info: info.value,
-      ...band.value,
+    tryCatch(async () => {
+      await trpc.request.update.add.mutate({
+        ...band.value,
+        entity: 'BAND',
+        entityId: bandId,
+        artists: artistList.value,
+        info: info.value,
+      })
     })
   }
 }
@@ -75,9 +79,12 @@ onBeforeMount(async () => {
     <div v-for="artist in artistList" :key="artist.id">
       <span>{{ artist.name }}</span>
     </div>
-    <div></div>
 
-    <v-textarea v-model="info" label="Provide source(s) and/or clarification for the changes." variant="solo-filled"></v-textarea>
+    <v-textarea
+      v-model="info"
+      label="Provide source(s) and/or clarification for the changes."
+      variant="solo-filled"
+    ></v-textarea>
 
     <v-btn @click.prevent="submitChanges()">Update</v-btn>
     <v-btn @click.prevent="submitRequest()">Submit</v-btn>

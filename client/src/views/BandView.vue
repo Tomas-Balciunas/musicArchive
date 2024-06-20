@@ -29,8 +29,8 @@ const artistInsert: Ref<ArtistInsert> = makeInsert(artistForm.value, { bandId })
 
 const createArtist = () => {
   tryCatch(async () => {
-    await trpc.artist.create.mutate(artistInsert.value)
-    await updateBand()
+    await trpc.request.create.add.mutate({entity: 'ARTIST', info: 'testartist',  ...artistInsert.value})
+    
   })
 }
 

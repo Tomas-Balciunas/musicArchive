@@ -6,7 +6,7 @@ import { RouterLink } from 'vue-router'
 const r = ref()
 
 onBeforeMount(async () => {
-  r.value = await trpc.band.request.update.find.query()
+  r.value = await trpc.request.update.find.query('BAND')
 })
 </script>
 
@@ -16,11 +16,9 @@ onBeforeMount(async () => {
       <RouterLink :to="{ name: 'BandUpdateReq', params: { id: req.id } }">
         <v-card class="bandList">
           <v-card-item>
-            <v-card-title>
-              {{ req.band.name }}
-            </v-card-title>
+            <v-card-title>{{ req.band_name }}</v-card-title>
             <v-card-subtitle>
-              {{ req.createdAt }}
+              {{ req.created_at }}
             </v-card-subtitle>
           </v-card-item>
         </v-card>

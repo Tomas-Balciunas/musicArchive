@@ -6,6 +6,7 @@ import user from './user'
 import artist from './artist'
 import review from './review'
 import post from './post'
+import request from './request'
 
 export const appRouter = router({
   band,
@@ -15,6 +16,7 @@ export const appRouter = router({
   artist,
   review,
   post,
+  request
 })
 
 export type AppRouter = typeof appRouter

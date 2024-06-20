@@ -20,7 +20,9 @@ it('should create an album', async () => {
   const albumCreated = await create({
     title: 'Album Title',
     bandId: band.id,
-    artistList: [],
+    artists: [],
+    songs: [],
+    released: 2000
   })
 
   expect(albumCreated).toMatchObject({

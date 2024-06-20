@@ -60,6 +60,7 @@ export default authProcedure
 
     const foundArtists = await db.getRepository(Artist).find({
       where: { name: ILike(`%${name}%`), id: Not(In(currentArtistList)) },
+      take: 10
     })
 
     return foundArtists

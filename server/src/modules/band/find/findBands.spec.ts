@@ -16,11 +16,15 @@ it('should find all bands', async () => {
   const { find } = createCaller({ db })
 
   const bandList = await find()
+  const bandsList = bands.map((band) => {
+    const {id, name, description} = band
+    return {id, name, description}
+  })
   const cleanedList = bandList.map((band) => {
-    const {posts, albums, artists, ...cleanBand} = band
-    return cleanBand
+    const {id, name, description} = band
+    return {id, name, description}
   })
 
   expect(cleanedList).toHaveLength(2)
-  expect(cleanedList).toMatchObject(bands)
+  expect(cleanedList).toMatchObject(bandsList)
 })

@@ -6,31 +6,29 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 const rId = Number(route.params.id)
 const r = ref()
+const b = ref()
 
 const approveChanges = async () => {
-  await trpc.band.update.mutate({
-    ...r.value.updated,
-    bandId: r.value.band.id,
-    artists: r.value.artists,
-  })
-  await trpc.band.request.update.status.mutate({ id: rId, status: 'approved' })
+  await trpc.request.update.approve.mutate({id: r.value.id, entity: 'BAND'})
 }
 
 const rejectChanges = async () => {
-  await trpc.band.request.update.status.mutate({ id: rId, status: 'rejected' })
+  await trpc.request.update.reject.mutate(rId)
 }
 
 onBeforeMount(async () => {
-  r.value = await trpc.band.request.update.get.query(rId)
+  r.value = await trpc.request.update.get.query(rId)
+  b.value = await trpc.band.get.query(r.value.entityId)
 })
 </script>
 
 <template>
-  <div v-if="r">
+  {{ r }}
+  <div v-if="r && b">
     <h1>
-      <RouterLink :to="{ name: 'Band', params: { id: r.band.id } }">{{ r.band.name }}</RouterLink>
+      <RouterLink :to="{ name: 'Band', params: { id: b.id } }">{{ b.name }}</RouterLink>
     </h1>
-    <div v-for="(c, i) in r.changes" :key="i">
+    <div v-for="(c, i) in r.comparison" :key="i">
       <h4>{{ i }}:</h4>
       <p>Old: {{ c.old }}</p>
       <p>

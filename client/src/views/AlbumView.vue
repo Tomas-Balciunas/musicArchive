@@ -9,8 +9,6 @@ import { isLoggedIn } from '@/stores/user'
 const route = useRoute()
 const album = ref<AlbumFull>()
 const albumId = Number(route.params.id)
-const searchResults = ref<ArtistBare[]>([])
-const searchForm = ref('')
 
 const toSeconds = computed(() => {
   return parseInt(songTime.value.minutes) * 60 + parseInt(songTime.value.seconds)
@@ -34,30 +32,8 @@ const songForm = ref({
   albumId,
 })
 
-const createSong = () => {
-  tryCatch(async () => {
-    await trpc.song.create.mutate(songForm.value)
-    await updateAlbum()
-  })
-}
-
-const addArtist = async (artistId: number) => {
-  await trpc.artist.add.mutate({ albumId, artistId })
-  await updateAlbum()
-  searchForm.value = ''
-  searchResults.value = []
-}
-
 const updateAlbum = async () => {
   album.value = await trpc.album.get.query(albumId)
-}
-
-const search = async () => {
-  if (searchForm.value === '') {
-    searchResults.value = []
-  } else {
-    searchResults.value = await trpc.artist.search.query({ name: searchForm.value, albumId })
-  }
 }
 
 onBeforeMount(async () => {
@@ -67,11 +43,15 @@ onBeforeMount(async () => {
 
 <template>
   <div v-if="album">
+    <RouterLink :to="{ name: 'AlbumUpdate', params: { id: albumId } }"
+      ><v-btn>Update</v-btn></RouterLink
+    >
     <div class="borderBox">
       <h1>{{ album.title }}</h1>
       <RouterLink :to="{ name: 'Band', params: { id: album.band.id } }">
         <h3>{{ album.band.name }}</h3>
       </RouterLink>
+      <h4>{{ album.released }}</h4>
     </div>
 
     <div class="borderBox">
@@ -106,51 +86,7 @@ onBeforeMount(async () => {
       </div>
       <h5 v-else>No reviews found</h5>
     </div>
-    <div class="d-flex">
-      <div class="borderBox createBox" v-if="isLoggedIn">
-        <form @submit.prevent="createSong">
-          <p class="text-center">Add song</p>
-          <div>
-            <v-text-field label="Song title" variant="solo-filled" v-model="songForm.title" />
-          </div>
-          <div class="timeBox">
-            <v-text-field
-              type="number"
-              label="Minutes"
-              variant="solo-filled"
-              v-model="songTime.minutes"
-            />
-            <v-text-field
-              type="number"
-              label="Seconds"
-              variant="solo-filled"
-              v-model="songTime.seconds"
-            />
-          </div>
-
-          <div class="gap-3">
-            <v-btn type="submit" color="#C62828">Save</v-btn>
-          </div>
-        </form>
-      </div>
-
-      <div class="borderBox createBox">
-        <p class="text-center">Add artist</p>
-        <div>
-          <v-text-field
-            label="Search for artists"
-            variant="solo-filled"
-            v-model="searchForm"
-            @update:model-value="search"
-          />
-        </div>
-
-        <div v-for="artist in searchResults" :key="artist.id">
-          <span>{{ artist.name }}</span>
-          <v-btn type="button" color="#C62828" @click="addArtist(artist.id)">+</v-btn>
-        </div>
-      </div>
-    </div>
+    <div class="d-flex"></div>
     <div v-if="isLoggedIn">
       <RouterLink :to="{ name: 'ReviewCreate', params: { id: albumId } }">
         <div class="gap-3">

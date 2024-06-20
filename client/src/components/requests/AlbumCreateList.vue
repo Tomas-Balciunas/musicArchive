@@ -6,7 +6,7 @@ import { RouterLink } from 'vue-router'
 const r = ref()
 
 onBeforeMount(async () => {
-  r.value = await trpc.album.request.create.find.query()
+  r.value = await trpc.request.create.find.query('ALBUM')
 })
 </script>
 
@@ -17,9 +17,9 @@ onBeforeMount(async () => {
         <v-card class="bandList">
           <v-card-item>
             <v-card-title>
-              {{ req.title }}
+              {{ req.data.title }}
             </v-card-title>
-            <v-card-subtitle> {{ req.createdAt }} {{ req.band.name }} </v-card-subtitle>
+            <v-card-subtitle> {{ req.createdAt }} {{}} </v-card-subtitle>
           </v-card-item>
         </v-card>
       </RouterLink>

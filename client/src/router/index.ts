@@ -76,6 +76,22 @@ const routes = [
     name: 'AlbumCreateReq',
     component: () => import('../views/requests/AlbumCreateReqView.vue'),
   },
+  {
+    path: '/album/update/:id',
+    name: 'AlbumUpdate',
+    component: () => import('../views/AlbumUpdateView.vue')
+  },
+  {
+    path: '/requests/artist/create/:id',
+    beforeEnter: [authenticate],
+    name: 'ArtistCreateReq',
+    component: () => import('../views/requests/ArtistCreateReqView.vue'),
+  },
+  {
+    path: '/requests/album/update/:id',
+    name: 'AlbumUpdateReq',
+    component: () => import('../views/requests/AlbumUpdateReqView.vue')
+  },
 ]
 
 const router = createRouter({

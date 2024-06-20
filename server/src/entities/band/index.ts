@@ -12,7 +12,6 @@ import { Artist, artistSchema } from '../artist'
 import { Album } from '../album'
 import { Post } from '../post'
 import { BandClean } from './base'
-import { RequestBandUpdate } from './request_update'
 
 @Entity()
 export class Band extends BandClean {
@@ -47,12 +46,6 @@ export class Band extends BandClean {
   })
   @JoinTable()
   albums: Album[]
-
-  @OneToMany(() => RequestBandUpdate, (updateReqs) => updateReqs.band, {
-    cascade: ['insert', 'update'],
-  })
-  @JoinTable()
-  updateReqs: RequestBandUpdate[]
 }
 
 export type BandBare = BandClean
