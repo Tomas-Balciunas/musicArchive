@@ -14,6 +14,12 @@ const routes = [
     component: () => import('../views/BandCreateView.vue'),
   },
   {
+    path: '/artist/create',
+    beforeEnter: [authenticate],
+    name: 'ArtistCreate',
+    component: () => import('../views/ArtistCreateView.vue'),
+  },
+  {
     path: '/band/:id',
     name: 'Band',
     component: () => import('../views/BandView.vue'),
@@ -91,6 +97,16 @@ const routes = [
     path: '/requests/album/update/:id',
     name: 'AlbumUpdateReq',
     component: () => import('../views/requests/AlbumUpdateReqView.vue')
+  },
+  {
+    path: '/artist/update/:id',
+    name: 'ArtistUpdate',
+    component: () => import('../views/ArtistUpdateView.vue')
+  },
+  {
+    path: '/requests/artist/update/:id',
+    name: 'ArtistUpdateReq',
+    component: () => import('../views/requests/ArtistUpdateReqView.vue')
   },
 ]
 

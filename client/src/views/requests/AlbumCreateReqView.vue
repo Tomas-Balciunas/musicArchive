@@ -19,7 +19,7 @@ const toMinutes = (duration: number) => {
 const approveChanges = async () => {
   tryCatch(async () => {
     await trpc.request.create.approve.mutate({
-      id: r.value.id,
+      id: rId,
       ...r.value.data,
       bandId: r.value.data.bandId,
       artists: r.value.data.artists,

@@ -28,7 +28,7 @@ const entities: {
   ) => Promise<EntityReturn[K]>
 } = {
   ALBUM: updateAlbum,
-  ARTIST: createArtist,
+  ARTIST: updateArtist,
   BAND: updateBand,
 }
 

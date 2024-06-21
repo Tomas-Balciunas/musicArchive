@@ -13,35 +13,60 @@ export async function updateBand(
   const bandRepo = db.getRepository(Band)
   const artistRepo = db.getRepository(Artist)
 
-  await bandRepo.update({ id }, base)
+  const queryRunner = db.createQueryRunner()
+  await queryRunner.connect()
+  await queryRunner.startTransaction()
 
-  if (artists.length) {
-    const idList = data.artists.map((a) => a.id)
-
-    const band = await bandRepo.findOne({
-      where: { id },
-      relations: ['artists'],
-    })
-
-    if (!band) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Band not found.',
-      })
+  try {
+    if (Object.keys(base).length) {
+      await bandRepo.update({ id }, base)
     }
 
-    const list = await artistRepo.find({
-      where: { id: In(idList) },
-    })
+    if (artists.length) {
+      const band = await bandRepo.findOne({
+        where: { id },
+        relations: ['artists'],
+      })
 
-    list.forEach((a) => band.artists.push(a))
-    await bandRepo.save(band)
+      if (!band) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Band not found.',
+        })
+      }
+
+      if (artists.length) {
+        const idList = data.artists.map((a) => a.id)
+
+        const list = await artistRepo.find({
+          where: { id: In(idList) },
+        })
+
+        list.forEach((a) => band.artists.push(a))
+      }
+
+      await bandRepo.save(band)
+    }
+
+    await queryRunner.commitTransaction()
+  } catch (error) {
+    await queryRunner.rollbackTransaction()
+    throw error
+  } finally {
+    await queryRunner.release()
   }
 
   const updatedBand = await bandRepo.findOne({
     where: { id },
     relations: ['artists'],
   })
+
+  if (!updatedBand) {
+    throw new TRPCError({
+      code: 'NOT_FOUND',
+      message: 'Album not found.',
+    })
+  }
 
   return updatedBand
 }

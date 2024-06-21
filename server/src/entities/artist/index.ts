@@ -12,7 +12,7 @@ export class Artist {
   @Column('text')
   name: string
 
-  @Column('date', { nullable: true, default: null })
+  @Column('text', { nullable: true, default: null })
   birth: Date | null
 
   @ManyToMany(() => Band, (band) => band.artists, {

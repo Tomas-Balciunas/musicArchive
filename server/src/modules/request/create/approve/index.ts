@@ -2,6 +2,7 @@ import { AlbumBare } from '@server/entities/album'
 import { ArtistBare } from '@server/entities/artist'
 import {
   EntityTypeCreate,
+  RequestCreate,
   inputCreateSchema,
 } from '@server/entities/request/create'
 import { createAlbum } from '@server/modules/album/services'
@@ -27,9 +28,15 @@ const entities: {
 export default authProcedure
   .input(inputCreateSchema)
   .mutation(async ({ input, ctx: { db } }) => {
-    const { entity, ...data } = input
+    const { id, entity, ...data } = input
 
     const createdData = await entities[entity](db, data)
+
+    if (createdData) {
+      await db
+        .getRepository(RequestCreate)
+        .update({ id }, { status: 'approved' })
+    }
 
     return createdData
   })

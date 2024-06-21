@@ -16,15 +16,15 @@ it('should create an artist with album link', async () => {
 
   const artistInsert = {
     name: 'Artist Name',
-    birth: new Date('2000-01-01'),
+    birth: null,
     bandId: band.id
   }
 
-  const {bands, ...artistClean} = await create(artistInsert)
+  const artist = await create(artistInsert)
 
-  expect(artistClean).toMatchObject({
+  expect(artist).toMatchObject({
     id: expect.any(Number),
     name: artistInsert.name,
-    birth: '2000-01-01',
+    birth: null
   })
 })

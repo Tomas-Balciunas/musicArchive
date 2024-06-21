@@ -13,6 +13,16 @@ onBeforeMount(async () => {
 
 <template>
   <div>
+    <div v-if="isLoggedIn">
+      <RouterLink :to="{ name: 'BandCreate' }"
+        ><v-btn color="#C62828">Create a new band</v-btn></RouterLink
+      >
+    </div>
+    <div v-if="isLoggedIn">
+      <RouterLink :to="{ name: 'ArtistCreate' }"
+        ><v-btn color="#C62828">Create a new artist</v-btn></RouterLink
+      >
+    </div>
     <h3>Bands:</h3>
     <div v-if="bands.length">
       <RouterLink
@@ -32,11 +42,5 @@ onBeforeMount(async () => {
         </v-card></RouterLink>
     </div>
     <h5 v-else>No bands found.</h5>
-
-    <div v-if="isLoggedIn">
-      <RouterLink component="RouterLink" :to="{ name: 'BandCreate' }"
-        ><v-btn color="#C62828">Add a new band</v-btn></RouterLink
-      >
-    </div>
   </div>
 </template>

@@ -3,7 +3,12 @@ import {
   insertUpdateSchema,
 } from '@server/entities/request/update'
 import { authProcedure } from '@server/trpc/procedures'
-import { areChanges, entityGet, findChanges } from '../services'
+import {
+  areChanges,
+  entityGet,
+  findChanges,
+  relationsSeparator,
+} from '../services'
 import { TRPCError } from '@trpc/server'
 
 export default authProcedure
@@ -12,12 +17,7 @@ export default authProcedure
     const { entity, entityId, info, ...data } = input
     const userId = authUser.id
 
-    const relations: object[] = []
-    const keys: string[] = []
-
-    Object.entries(data).forEach(([k, v]) => {
-      Array.isArray(v) ? (relations[k] = v) : keys.push(k)
-    })
+    const { keys, relations } = relationsSeparator(data)
 
     const original = await entityGet(entity, entityId, db)
 
@@ -30,7 +30,7 @@ export default authProcedure
       })
     }
 
-    const changesJson = JSON.stringify({...changes, ...relations})
+    const changesJson = JSON.stringify({ ...changes, ...relations })
 
     const req = await db
       .getRepository(RequestUpdate)

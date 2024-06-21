@@ -1,18 +1,11 @@
-import { Band } from '@server/entities'
-import { Artist, artistInsertSchema } from '@server/entities/artist'
+import { artistInsertSchema } from '@server/entities/artist'
 import { authProcedure } from '@server/trpc/procedures'
+import { createArtist } from '../services'
 
 export default authProcedure
   .input(artistInsertSchema)
-  .mutation(async ({ input, ctx: { db } }) => {
-    const { bandId, ...artist } = input
-
-    const band = await db.getRepository(Band).findBy({ id: bandId })
-
-    const createdArtist = await db.getRepository(Artist).save({
-      ...artist,
-      bands: band,
-    })
+  .mutation(async ({ input: data, ctx: { db } }) => {
+    const createdArtist = await createArtist(db, data)
 
     return createdArtist
   })

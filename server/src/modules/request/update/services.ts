@@ -76,3 +76,22 @@ export function areChanges(changes: object, relations: object) {
 
   return !baseChanges || !relationChanges
 }
+
+export function relationsSeparator(data: any) {
+  const keys: string[] = []
+  const relations: object[] = []
+
+  Object.entries(data).forEach(([k, v]: [string, unknown]) => {
+    if (Array.isArray(v)) {
+      v.every(item => isObject(item)) ? relations[k] = v : keys.push(k)
+    } else {
+      keys.push(k)
+    }
+  })
+
+  return { keys, relations }
+}
+
+function isObject(item :unknown) {
+  return item !== null && !Array.isArray(item) && typeof item === 'object'
+}

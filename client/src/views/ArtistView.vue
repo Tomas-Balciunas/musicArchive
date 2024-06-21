@@ -16,6 +16,9 @@ onBeforeMount(async () => {
 
 <template>
   <div v-if="artist">
+    <RouterLink :to="{ name: 'ArtistUpdate', params: { id: artistId } }"
+      ><v-btn>Update</v-btn></RouterLink
+    >
     <h3>{{ artist.name }}</h3>
     <p>Birth date:{{ artist.birth ?? 'N/A' }}</p>
     <h4>Bands:</h4>
