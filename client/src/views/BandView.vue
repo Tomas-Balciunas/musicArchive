@@ -3,7 +3,6 @@ import { trpc } from '@/trpc'
 import { onBeforeMount, ref, type Ref } from 'vue'
 import type {
   BandFull,
-  ArtistInsert,
   PostInsert,
 } from '@mono/server/src/shared/entities'
 import { useRoute, useRouter } from 'vue-router'
@@ -15,24 +14,11 @@ const route = useRoute()
 const router = useRouter()
 const bandId = Number(route.params.id)
 
-const artistForm = ref({
-  name: '',
-  birth: null,
-})
-
 const postForm = ref({
   body: '',
 })
 
 const postInsert: Ref<PostInsert> = makeInsert(postForm.value, { bandId })
-const artistInsert: Ref<ArtistInsert> = makeInsert(artistForm.value, { bandId })
-
-const createArtist = () => {
-  tryCatch(async () => {
-    await trpc.request.create.add.mutate({entity: 'ARTIST', info: 'testartist',  ...artistInsert.value})
-    
-  })
-}
 
 const createComment = () => {
   tryCatch(async () => {
@@ -121,28 +107,6 @@ onBeforeMount(async () => {
           <p class="text-center">Add user comment</p>
           <div>
             <v-textarea variant="solo-filled" v-model="postForm.body"></v-textarea>
-          </div>
-
-          <div>
-            <v-btn type="submit" color="#C62828" class="basicBtn">Save</v-btn>
-          </div>
-        </form>
-      </div>
-
-      <div class="borderBox createBox">
-        <form @submit.prevent="createArtist">
-          <p class="text-center">Create artist</p>
-          <div>
-            <v-text-field label="Name" variant="solo-filled" v-model="artistForm.name" />
-          </div>
-
-          <div>
-            <v-date-input
-              label="Birth date (optional)"
-              v-model="artistForm.birth"
-              clearable
-              @click:clear="artistForm.birth = null"
-            ></v-date-input>
           </div>
 
           <div>

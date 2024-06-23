@@ -79,6 +79,7 @@ export async function updateBand(
 export async function getBand(id: number, db: DataSource): Promise<BandFull> {
   const band = (await db.getRepository(Band).findOne({
     where: { id },
+    relations: ['artists', 'albums', 'posts']
   })) as BandFull
 
   if (!band) {

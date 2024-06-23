@@ -135,6 +135,7 @@ export async function albumExists(db: DataSource, data: AlbumInsert) {
 export async function getAlbum(id: number, db: DataSource): Promise<AlbumFull> {
   const album = (await db.getRepository(Album).findOne({
     where: { id },
+    relations: ['artists', 'band', 'reviews', 'songs']
   })) as AlbumFull
 
   if (!album) {

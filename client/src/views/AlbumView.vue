@@ -32,7 +32,7 @@ onBeforeMount(async () => {
     >
     <div class="borderBox">
       <h1>{{ album.title }}</h1>
-      <RouterLink :to="{ name: 'Band', params: { id: album.band.id } }">
+      <RouterLink :to="{ name: 'Band', params: { id: album.bandId } }">
         <h3>{{ album.band.name }}</h3>
       </RouterLink>
       <h4>{{ album.released }}</h4>
