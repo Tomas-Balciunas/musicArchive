@@ -2,8 +2,8 @@ import { createCallerFactory } from '@server/trpc'
 import { createTestDatabase } from '@tests/utils/database'
 import { Artist } from '@server/entities'
 import { fakeArtist } from '@server/entities/tests/fakes'
-import router from '..'
 import { ARTIST_NOT_FOUND } from '@server/consts'
+import router from '..'
 
 const createCaller = createCallerFactory(router)
 

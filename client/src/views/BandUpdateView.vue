@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { trpc } from '@/trpc'
 import { onBeforeMount, ref } from 'vue'
-import type { ArtistBare, BandUpdate } from '@mono/server/src/shared/entities'
+import type { ArtistBare } from '@mono/server/src/shared/entities'
 import { getCountryDataList } from 'countries-list'
 import { useRoute } from 'vue-router'
 import { tryCatch } from '@/composables'

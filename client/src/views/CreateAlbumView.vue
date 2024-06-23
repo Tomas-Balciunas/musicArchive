@@ -39,7 +39,6 @@ const albumForm = ref({
 })
 const artistList = ref<Pick<ArtistBare, 'id' | 'name'>[]>([])
 const songList = ref<Omit<SongInsert, 'album'>[]>([])
-const info = ref('info')
 
 const addArtist = async (artistId: number, name: string) => {
   searchForm.value = ''

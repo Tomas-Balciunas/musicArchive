@@ -1,4 +1,4 @@
-import { Artist, Band } from '@server/entities'
+import { Artist } from '@server/entities'
 import {
   type ArtistBare,
   type ArtistFull,

@@ -1,4 +1,3 @@
-import { Band } from '@server/entities'
 import {
   RequestUpdate,
   entityUpdateSchema,

@@ -1,5 +1,4 @@
 import { createCallerFactory } from '@server/trpc'
-import router from '..'
 import { authContext } from '@tests/utils/context'
 import { createTestDatabase } from '@tests/utils/database'
 import { Artist, Band, RequestCreate, User } from '@server/entities'
@@ -10,6 +9,7 @@ import {
   fakeUser,
 } from '@server/entities/tests/fakes'
 import { AlbumApproved } from '@server/entities/album'
+import router from '..'
 
 const createCaller = createCallerFactory(router)
 

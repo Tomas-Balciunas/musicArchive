@@ -76,8 +76,6 @@ export async function updateBand(
   return updatedBand
 }
 
-export async function bandChanges() {}
-
 export async function getBand(id: number, db: DataSource): Promise<BandFull> {
   const band = (await db.getRepository(Band).findOne({
     where: { id },

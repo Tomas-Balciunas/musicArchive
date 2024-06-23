@@ -6,6 +6,7 @@ import superjson from 'superjson'
 import { fakeUser } from './fakeData'
 
 // Playwright might have incorrectly typed `trpc` as `any`.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const trpc = createTRPCProxyClient<AppRouter>({
   transformer: superjson,
   links: [
@@ -25,6 +26,7 @@ const trpc = createTRPCProxyClient<AppRouter>({
 // a seeded database. However, that generally requires more front-to-back
 // coordination and is more brittle to changes in the API.
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function loginNewUser(page: Page, userLogin = fakeUser()) {
   // 1. Signup
   // 2. Login, get access token

@@ -1,10 +1,10 @@
 import { z } from 'zod'
 import { Column, Entity } from 'typeorm'
 import { validates } from '@server/utils/validation'
-import { RequestBase, entities } from '../base'
 import { bandUpdateSchema } from '@server/entities/band'
 import { albumUpdateSchema } from '@server/entities/album'
 import { artistUpdateSchema } from '@server/entities/artist'
+import { RequestBase, entities } from '../base'
 
 @Entity()
 export class RequestUpdate extends RequestBase {

@@ -11,7 +11,11 @@ export default authProcedure
       .getRepository(RequestCreate)
       .find({ where: { entity, status: 'pending' } })
 
-    foundRequests.map((r) => (r.data = JSON.parse(r.data)))
+    foundRequests.map((r) => {
+      // eslint-disable-next-line no-param-reassign
+      r.data = JSON.parse(r.data)
+      return r
+    })
 
     return foundRequests
   })

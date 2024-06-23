@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 import { trpc } from '@/trpc'
-import { computed, onBeforeMount, ref } from 'vue'
-import type { ArtistBare, SongBare } from '@mono/server/src/shared/entities'
+import { onBeforeMount, ref } from 'vue'
+import type { ArtistBare, SongInsert } from '@mono/server/src/shared/entities'
 import { useRoute } from 'vue-router'
 import { tryCatch } from '@/composables'
-import type { SongInsert } from '@server/entities/song'
 
 const album = ref()
 const currentArtists = ref()
@@ -98,10 +97,10 @@ onBeforeMount(async () => {
 
     <div class="d-flex">
         <div>
-            <p v-for="a in currentArtists">{{ a.name }}</p>
+            <p v-for="a in currentArtists" :key="a.id">{{ a.name }}</p>
         </div>
         <div>
-            <p v-for="s in currentSongs">{{ s.title }} {{ toMinutes(s.duration) }}</p>
+            <p v-for="s in currentSongs" :key="s.id">{{ s.title }} {{ toMinutes(s.duration) }}</p>
         </div>
     </div>
 

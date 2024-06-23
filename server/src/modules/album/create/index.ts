@@ -1,5 +1,4 @@
 import { albumInsertSchema } from '@server/entities/album'
-import { TRPCError } from '@trpc/server'
 import { authProcedure } from '@server/trpc/procedures'
 import { albumExists, createAlbum } from '../services'
 

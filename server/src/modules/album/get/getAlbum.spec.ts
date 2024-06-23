@@ -2,8 +2,8 @@ import { fakeAlbum, fakeBand } from '@server/entities/tests/fakes'
 import { createTestDatabase } from '@tests/utils/database'
 import { Album, Band } from '@server/entities'
 import { createCallerFactory } from '@server/trpc'
-import router from '..'
 import { ALBUM_NOT_FOUND } from '@server/consts'
+import router from '..'
 
 const createCaller = createCallerFactory(router)
 

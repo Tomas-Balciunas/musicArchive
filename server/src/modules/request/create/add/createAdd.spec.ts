@@ -1,10 +1,10 @@
 import { createCallerFactory } from '@server/trpc'
-import router from '..'
 import { createTestDatabase } from '@tests/utils/database'
 import { authContext } from '@tests/utils/context'
 import { fakeUser } from '@server/entities/tests/fakes'
 import { User } from '@server/entities'
 import { InsertCreate } from '@server/shared/entities'
+import router from '..'
 
 const createCaller = createCallerFactory(router)
 

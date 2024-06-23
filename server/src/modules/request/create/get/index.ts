@@ -1,8 +1,6 @@
 import { RequestCreate, reqSchema } from '@server/entities/request/create'
 import { authProcedure } from '@server/trpc/procedures'
-import { TRPCError } from '@trpc/server'
 import { getRequest } from '../../services'
-import { Repository } from 'typeorm'
 
 export default authProcedure
   .input(reqSchema.shape.id)

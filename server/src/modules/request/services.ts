@@ -6,7 +6,12 @@ import { getArtist } from '@server/modules/artist/services'
 import { getBand } from '@server/modules/band/services'
 import { type EntityTypeUpdate } from '@server/shared/entities'
 import { TRPCError } from '@trpc/server'
-import { DataSource, type FindOneOptions, type ObjectLiteral, Repository } from 'typeorm'
+import {
+  DataSource,
+  type FindOneOptions,
+  type ObjectLiteral,
+  Repository,
+} from 'typeorm'
 
 type EntityWithId = { id: number }
 
@@ -98,11 +103,15 @@ export function areChanges(changes: object, relations: any) {
 
 export function relationsSeparator(data: any) {
   const keys: string[] = []
-  const relations: Record<string, any[]> = {};
+  const relations: Record<string, any[]> = {}
 
   Object.entries(data).forEach(([k, v]: [string, unknown]) => {
     if (Array.isArray(v)) {
-      v.every((item) => isObject(item)) ? (relations[k] = v) : keys.push(k)
+      if (v.every((item) => isObject(item))) {
+        relations[k] = v
+      } else {
+        keys.push(k)
+      }
     } else {
       keys.push(k)
     }

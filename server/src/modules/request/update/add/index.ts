@@ -3,13 +3,13 @@ import {
   insertUpdateSchema,
 } from '@server/entities/request/update'
 import { authProcedure } from '@server/trpc/procedures'
+import { TRPCError } from '@trpc/server'
 import {
   areChanges,
   entityGet,
   findChanges,
   relationsSeparator,
 } from '../../services'
-import { TRPCError } from '@trpc/server'
 
 export default authProcedure
   .input(insertUpdateSchema)

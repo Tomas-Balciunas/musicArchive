@@ -1,7 +1,5 @@
-import { Artist } from '@server/entities/artist'
-import { Band, bandIdSchema, bandUpdateSchema } from '@server/entities/band'
+import { bandIdSchema, bandUpdateSchema } from '@server/entities/band'
 import { authProcedure } from '@server/trpc/procedures'
-import { In } from 'typeorm'
 import { updateBand } from '../services'
 
 export default authProcedure

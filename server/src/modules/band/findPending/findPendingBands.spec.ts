@@ -2,15 +2,15 @@ import { fakeBand } from '@server/entities/tests/fakes'
 import { createTestDatabase } from '@tests/utils/database'
 import { Band } from '@server/entities'
 import { createCallerFactory } from '@server/trpc'
-import router from '..'
 import { authContext } from '@tests/utils/context'
+import router from '..'
 
 const createCaller = createCallerFactory(router)
 
 it('should find all pending bands', async () => {
   const db = await createTestDatabase()
 
-  const [band, bandPending ] = await db
+  const [, bandPending] = await db
     .getRepository(Band)
     .save([fakeBand({pending: false}), fakeBand({pending: true})])
 
@@ -18,8 +18,8 @@ it('should find all pending bands', async () => {
 
   const bandList = await findPending()
 
-  const cleanedList = bandList.map((band) => {
-    const {id} = band
+  const cleanedList = bandList.map((b) => {
+    const {id} = b
     return {id}
   })
 

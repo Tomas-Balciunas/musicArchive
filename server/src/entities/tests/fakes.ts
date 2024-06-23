@@ -3,8 +3,8 @@ import { Album } from '../album'
 import { Band } from '../band'
 import { Review } from '../review'
 import { Artist } from '../artist'
-import { random } from './random'
 import { RequestUpdate } from '../request/update'
+import { random } from './random'
 
 const randomId = () => random.integer({ min: 1, max: 2147483647 })
 

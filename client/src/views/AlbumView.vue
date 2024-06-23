@@ -1,18 +1,13 @@
 <script lang="ts" setup>
 import { trpc } from '@/trpc'
 import { useRoute } from 'vue-router'
-import { computed, onBeforeMount, ref } from 'vue'
-import { type AlbumFull, type ArtistBare } from '@mono/server/src/shared/entities'
-import { tryCatch } from '@/composables'
+import { onBeforeMount, ref } from 'vue'
+import { type AlbumFull } from '@mono/server/src/shared/entities'
 import { isLoggedIn } from '@/stores/user'
 
 const route = useRoute()
 const album = ref<AlbumFull>()
 const albumId = Number(route.params.id)
-
-const toSeconds = computed(() => {
-  return parseInt(songTime.value.minutes) * 60 + parseInt(songTime.value.seconds)
-})
 
 const toMinutes = (duration: number) => {
   const min = Math.floor(duration / 60)
@@ -20,17 +15,6 @@ const toMinutes = (duration: number) => {
 
   return `${min < 10 ? '0' + min : min}:${sec < 10 ? '0' + sec : sec}`
 }
-
-const songTime = ref({
-  minutes: '',
-  seconds: '',
-})
-
-const songForm = ref({
-  title: '',
-  duration: toSeconds,
-  albumId,
-})
 
 const updateAlbum = async () => {
   album.value = await trpc.album.get.query(albumId)
