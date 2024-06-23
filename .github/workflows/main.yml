@@ -68,6 +68,7 @@ jobs:
           DB_PASSWORD: turing
           DB_NAME: testdb
           DB_HOST: localhost
+          TOKEN_KEY: ${{ secrets.TOKEN_KEY }}
 
           # port to start the server on
           PORT: 3000
