@@ -12,6 +12,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
+  <h1>Music archive</h1>
   <div>
     <div v-if="isLoggedIn">
       <RouterLink :to="{ name: 'BandCreate' }"

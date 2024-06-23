@@ -4,6 +4,7 @@ import { Band } from '../band'
 import { Review } from '../review'
 import { Artist } from '../artist'
 import { random } from './random'
+import { RequestUpdate } from '../request/update'
 
 const randomId = () => random.integer({ min: 1, max: 2147483647 })
 
@@ -54,3 +55,14 @@ export const fakeArtist = <T extends Partial<Artist>>(
   birth: random.date(),
   ...overrides,
 })
+
+export const fakeRequest = <T extends Partial<RequestUpdate>>(
+  overrides: T = {} as T
+) => ({
+  id: randomId(),
+  info: random.string(),
+  createdAt: random.date(),
+  solvedAt: random.date(),
+  ...overrides,
+})
+

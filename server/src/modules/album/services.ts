@@ -1,3 +1,4 @@
+import { ALBUM_NOT_FOUND } from '@server/consts'
 import { Song } from '@server/entities'
 import {
   Album,
@@ -5,6 +6,7 @@ import {
   AlbumFull,
   AlbumUpdate,
   type AlbumInsert,
+  AlbumApproved,
 } from '@server/entities/album'
 import { Artist } from '@server/entities/artist'
 import { SongFull, SongInsert } from '@server/entities/song'
@@ -44,7 +46,7 @@ export async function updateAlbum(
   db: DataSource,
   data: AlbumUpdate,
   id: number
-): Promise<AlbumBare> {
+): Promise<AlbumApproved> {
   const { artists, songs, ...base } = data
 
   const albumRepo = db.getRepository(Album)
@@ -63,7 +65,7 @@ export async function updateAlbum(
     if (artists.length || songs.length) {
       const album = await albumRepo.findOne({
         where: { id },
-        relations: ['artists', 'songs'],
+        relations: ['artists'],
       })
 
       if (!album) {
@@ -120,15 +122,27 @@ export async function updateAlbum(
 export async function albumExists(db: DataSource, data: AlbumInsert) {
   const album = await db
     .getRepository(Album)
-    .exists({ where: { bandId: data.bandId, title: data.title } })
+    .findOne({ where: { bandId: data.bandId, title: data.title } })
 
-  return album
+    if (album) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: `Album "${data.title}" already belongs to this band.`,
+      })
+    }
 }
 
 export async function getAlbum(id: number, db: DataSource): Promise<AlbumFull> {
   const album = (await db.getRepository(Album).findOne({
     where: { id },
   })) as AlbumFull
+
+  if (!album) {
+    throw new TRPCError({
+      code: 'NOT_FOUND',
+      message: ALBUM_NOT_FOUND,
+    })
+  }
 
   return album
 }

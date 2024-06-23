@@ -3,6 +3,7 @@ import { createTestDatabase } from '@tests/utils/database'
 import { Album, Band } from '@server/entities'
 import { createCallerFactory } from '@server/trpc'
 import router from '..'
+import { ALBUM_NOT_FOUND } from '@server/consts'
 
 const createCaller = createCallerFactory(router)
 
@@ -17,17 +18,19 @@ it('should get one album', async () => {
     ])
   const { get } = createCaller({ db })
 
-  const { band, reviews, songs, artists, ...albumClean } = await get(album2.id)
+  const foundAlbum = await get(album2.id)
 
-  expect(albumClean).toBeTypeOf('object')
-  expect(albumClean).toMatchObject({
-    id: expect.any(Number),
-    title: album2.title,
-    bandId: band.id,
-  })
-  expect(albumClean).not.toMatchObject({
-    id: expect.any(Number),
-    title: album1.title,
-    bandId: band.id,
-  })
+  expect(foundAlbum.id).toBe(album2.id)
+  expect(foundAlbum.id).not.toBe(album1.id)
+})
+
+it('should throw not found error', async () => {
+  const db = await createTestDatabase()
+
+  const band = await db.getRepository(Band).save(fakeBand())
+  const album = await db.getRepository(Album).save(fakeAlbum({bandId: band.id}))
+
+  const { get } = createCaller({ db })
+
+  expect(get(album.id + 1)).rejects.toThrow(ALBUM_NOT_FOUND)
 })

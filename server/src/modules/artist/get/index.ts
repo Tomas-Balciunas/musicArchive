@@ -1,3 +1,4 @@
+import { ARTIST_NOT_FOUND } from '@server/consts'
 import { Artist, artistSchema } from '@server/entities/artist'
 import { publicProcedure } from '@server/trpc'
 import { TRPCError } from '@trpc/server'
@@ -13,7 +14,7 @@ export default publicProcedure
     if (!artist) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: `Artist was not found`,
+        message: ARTIST_NOT_FOUND,
       })
     }
 

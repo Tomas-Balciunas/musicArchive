@@ -1,23 +1,22 @@
-import { AlbumBare } from '@server/entities/album'
+import { AlbumApproved } from '@server/entities/album'
 import { ArtistBare } from '@server/entities/artist'
-import { BandBare } from '@server/entities/band'
+import { BandApproved } from '@server/entities/band'
 import {
   EntityTypeUpdate,
   RequestUpdate,
-  approveUpdateSchema,
   reqUpdateSchema,
 } from '@server/entities/request/update'
 import { updateAlbum } from '@server/modules/album/services'
-import { createArtist, updateArtist } from '@server/modules/artist/services'
+import { updateArtist } from '@server/modules/artist/services'
 import { updateBand } from '@server/modules/band/services'
 import { authProcedure } from '@server/trpc/procedures'
 import { TRPCError } from '@trpc/server'
 import { DataSource } from 'typeorm'
 
 type EntityReturn = {
-  ALBUM: AlbumBare
+  ALBUM: AlbumApproved
   ARTIST: ArtistBare
-  BAND: BandBare
+  BAND: BandApproved
 }
 
 const entities: {

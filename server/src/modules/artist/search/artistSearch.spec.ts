@@ -7,7 +7,7 @@ import router from '..'
 
 const createCaller = createCallerFactory(router)
 
-it('should return artist based on search query', async () => {
+it('should return artists for album based on search query', async () => {
   const db = await createTestDatabase()
   const band = await db.getRepository(Band).save(fakeBand())
 
@@ -29,5 +29,33 @@ it('should return artist based on search query', async () => {
   const searchResults = await search({ name: 'john', albumId: album.id })
 
   expect(searchResults).toHaveLength(2)
-  expect(searchResults.every((a) => (a.name).toLowerCase() === 'john')).toBeTruthy()
+  expect(
+    searchResults.every((a) => a.name.toLowerCase() === 'john')
+  ).toBeTruthy()
+})
+
+it('should return artists for band based on search query', async () => {
+  const db = await createTestDatabase()
+  const bandRepo = db.getRepository(Band)
+
+  const artists = await db
+    .getRepository(Artist)
+    .save([
+      fakeArtist({ name: 'john' }),
+      fakeArtist({ name: 'John' }),
+      fakeArtist({ name: 'jane' }),
+    ])
+
+  const band = bandRepo.create(fakeBand())
+  band.artists = artists
+  bandRepo.save(band)
+
+  const { search } = createCaller(authContext({ db }))
+
+  const searchResults = await search({ name: 'john', bandId: band.id })
+
+  expect(searchResults).toHaveLength(2)
+  expect(
+    searchResults.every((a) => a.name.toLowerCase() === 'john')
+  ).toBeTruthy()
 })

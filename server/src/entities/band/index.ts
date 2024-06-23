@@ -50,6 +50,7 @@ export class Band extends BandClean {
 
 export type BandBare = BandClean
 export type BandFull = Band
+export type BandApproved = Omit<BandFull, 'albums' | 'posts'>
 
 export const bandSchema = validates<BandBare>().with({
   id: z.number().int().positive(),
@@ -62,7 +63,7 @@ export const bandSchema = validates<BandBare>().with({
 export const bandInsertSchema = bandSchema.omit({ id: true })
 export const bandIdSchema = bandSchema.pick({ id: true })
 export const bandUpdateSchema = bandSchema.omit({ id: true }).extend({
-  artists: z.array(artistSchema.pick({ id: true, name: true })),
+  artists: z.array(z.lazy(() => artistSchema.pick({ id: true, name: true }))),
 })
 
 export type BandUpdate = z.infer<typeof bandUpdateSchema>

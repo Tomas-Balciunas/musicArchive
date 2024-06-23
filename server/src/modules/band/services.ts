@@ -1,5 +1,6 @@
+import { BAND_NOT_FOUND } from '@server/consts'
 import { Artist, Band } from '@server/entities'
-import { BandBare, BandFull, BandUpdate } from '@server/entities/band'
+import { BandApproved, BandFull, BandUpdate } from '@server/entities/band'
 import { TRPCError } from '@trpc/server'
 import { DataSource, In } from 'typeorm'
 
@@ -7,7 +8,7 @@ export async function updateBand(
   db: DataSource,
   data: BandUpdate,
   id: number
-): Promise<BandBare> {
+): Promise<BandApproved> {
   const { artists, ...base } = data
 
   const bandRepo = db.getRepository(Band)
@@ -31,7 +32,7 @@ export async function updateBand(
       if (!band) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: 'Band not found.',
+          message: BAND_NOT_FOUND,
         })
       }
 
@@ -64,7 +65,7 @@ export async function updateBand(
   if (!updatedBand) {
     throw new TRPCError({
       code: 'NOT_FOUND',
-      message: 'Album not found.',
+      message: BAND_NOT_FOUND,
     })
   }
 
@@ -77,6 +78,13 @@ export async function getBand(id: number, db: DataSource): Promise<BandFull> {
   const band = (await db.getRepository(Band).findOne({
     where: { id },
   })) as BandFull
+
+  if (!band) {
+    throw new TRPCError({
+      code: 'NOT_FOUND',
+      message: BAND_NOT_FOUND,
+    })
+  }
 
   return band
 }

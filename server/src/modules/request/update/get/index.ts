@@ -5,7 +5,7 @@ import {
 } from '@server/entities/request/update'
 import { authProcedure } from '@server/trpc/procedures'
 import { TRPCError } from '@trpc/server'
-import { entityGet, findChanges, relationsSeparator } from '../services'
+import { entityGet, findChanges, relationsSeparator } from '../../services'
 
 export default authProcedure
   .input(reqUpdateSchema.shape.id)
@@ -23,7 +23,7 @@ export default authProcedure
 
     const { data, ...base } = req
     const parsedData = JSON.parse(data)
-    const {keys, relations} = relationsSeparator(parsedData)
+    const { keys, relations } = relationsSeparator(parsedData)
 
     const og = await entityGet(
       entityUpdateSchema.parse(base.entity),

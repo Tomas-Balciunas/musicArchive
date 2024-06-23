@@ -5,7 +5,26 @@ import { getAlbum } from '@server/modules/album/services'
 import { getArtist } from '@server/modules/artist/services'
 import { getBand } from '@server/modules/band/services'
 import { EntityTypeUpdate } from '@server/shared/entities'
-import { DataSource } from 'typeorm'
+import { TRPCError } from '@trpc/server'
+import { DataSource, FindOneOptions, ObjectLiteral, Repository } from 'typeorm'
+
+type EntityWithId = { id: number }
+
+export async function getRequest<T extends ObjectLiteral & EntityWithId>(
+  repo: Repository<T>,
+  id: number
+): Promise<T> {
+  const r: T | null = await repo.findOne({ where: { id } } as FindOneOptions<T>)
+
+  if (!r) {
+    throw new TRPCError({
+      code: 'NOT_FOUND',
+      message: 'Request not found.',
+    })
+  }
+
+  return r
+}
 
 export function findChanges(
   data: BandUpdate | AlbumUpdate | ArtistInsert,
@@ -83,7 +102,7 @@ export function relationsSeparator(data: any) {
 
   Object.entries(data).forEach(([k, v]: [string, unknown]) => {
     if (Array.isArray(v)) {
-      v.every(item => isObject(item)) ? relations[k] = v : keys.push(k)
+      v.every((item) => isObject(item)) ? (relations[k] = v) : keys.push(k)
     } else {
       keys.push(k)
     }
@@ -92,6 +111,6 @@ export function relationsSeparator(data: any) {
   return { keys, relations }
 }
 
-function isObject(item :unknown) {
+function isObject(item: unknown) {
   return item !== null && !Array.isArray(item) && typeof item === 'object'
 }

@@ -51,6 +51,7 @@ export class Album extends AlbumClean {
 
 export type AlbumBare = AlbumClean
 export type AlbumFull = Album
+export type AlbumApproved = Omit<AlbumFull, 'band' | 'reviews'>
 
 export const albumSchema = validates<AlbumBare>().with({
   id: z.number().int().positive(),

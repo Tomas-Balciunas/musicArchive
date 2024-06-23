@@ -8,7 +8,7 @@ import {
   entityGet,
   findChanges,
   relationsSeparator,
-} from '../services'
+} from '../../services'
 import { TRPCError } from '@trpc/server'
 
 export default authProcedure

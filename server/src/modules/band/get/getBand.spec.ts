@@ -3,6 +3,7 @@ import { createTestDatabase } from '@tests/utils/database'
 import { Band } from '@server/entities'
 import { createCallerFactory } from '@server/trpc'
 import router from '..'
+import { BAND_NOT_FOUND } from '@server/consts'
 
 const createCaller = createCallerFactory(router)
 
@@ -28,4 +29,14 @@ it('should get one band', async () => {
     name: band1.name,
     bandId: band2.description
   })
+})
+
+it('should throw not found error', async () => {
+  const db = await createTestDatabase()
+
+  const artist = await db.getRepository(Band).save(fakeBand())
+
+  const { get } = createCaller({ db })
+
+  expect(get(artist.id + 1)).rejects.toThrow(BAND_NOT_FOUND)
 })
