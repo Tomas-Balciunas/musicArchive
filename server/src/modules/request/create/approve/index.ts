@@ -1,7 +1,7 @@
-import { AlbumBare } from '@server/entities/album'
-import { ArtistBare } from '@server/entities/artist'
+import { type AlbumBare } from '@server/entities/album'
+import { type ArtistBare } from '@server/entities/artist'
 import {
-  EntityTypeCreate,
+  type EntityTypeCreate,
   RequestCreate,
   inputCreateSchema,
 } from '@server/entities/request/create'

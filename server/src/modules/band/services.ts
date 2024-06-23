@@ -1,6 +1,10 @@
 import { BAND_NOT_FOUND } from '@server/consts'
 import { Artist, Band } from '@server/entities'
-import { BandApproved, BandFull, BandUpdate } from '@server/entities/band'
+import {
+  type BandApproved,
+  type BandFull,
+  type BandUpdate,
+} from '@server/entities/band'
 import { TRPCError } from '@trpc/server'
 import { DataSource, In } from 'typeorm'
 

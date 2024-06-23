@@ -2,14 +2,14 @@ import { ALBUM_NOT_FOUND } from '@server/consts'
 import { Song } from '@server/entities'
 import {
   Album,
-  AlbumBare,
-  AlbumFull,
-  AlbumUpdate,
+  type AlbumBare,
+  type AlbumFull,
+  type AlbumUpdate,
   type AlbumInsert,
-  AlbumApproved,
+  type AlbumApproved,
 } from '@server/entities/album'
 import { Artist } from '@server/entities/artist'
-import { SongFull, SongInsert } from '@server/entities/song'
+import { type SongInsert } from '@server/entities/song'
 import { TRPCError } from '@trpc/server'
 import { DataSource, In } from 'typeorm'
 

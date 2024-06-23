@@ -1,8 +1,8 @@
-import { AlbumApproved } from '@server/entities/album'
-import { ArtistBare } from '@server/entities/artist'
-import { BandApproved } from '@server/entities/band'
+import { type AlbumApproved } from '@server/entities/album'
+import { type ArtistBare } from '@server/entities/artist'
+import { type BandApproved } from '@server/entities/band'
 import {
-  EntityTypeUpdate,
+  type EntityTypeUpdate,
   RequestUpdate,
   reqUpdateSchema,
 } from '@server/entities/request/update'

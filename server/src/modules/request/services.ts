@@ -1,12 +1,12 @@
-import { AlbumFull, AlbumUpdate } from '@server/entities/album'
-import { ArtistFull, ArtistInsert } from '@server/entities/artist'
-import { BandFull, BandUpdate } from '@server/entities/band'
+import { type AlbumFull, type AlbumUpdate } from '@server/entities/album'
+import { type ArtistFull, type ArtistInsert } from '@server/entities/artist'
+import { type BandFull, type BandUpdate } from '@server/entities/band'
 import { getAlbum } from '@server/modules/album/services'
 import { getArtist } from '@server/modules/artist/services'
 import { getBand } from '@server/modules/band/services'
-import { EntityTypeUpdate } from '@server/shared/entities'
+import { type EntityTypeUpdate } from '@server/shared/entities'
 import { TRPCError } from '@trpc/server'
-import { DataSource, FindOneOptions, ObjectLiteral, Repository } from 'typeorm'
+import { DataSource, type FindOneOptions, type ObjectLiteral, Repository } from 'typeorm'
 
 type EntityWithId = { id: number }
 
@@ -86,7 +86,7 @@ export async function entityGet(
   return e
 }
 
-export function areChanges(changes: object, relations: object) {
+export function areChanges(changes: object, relations: any) {
   const baseChanges = !Object.keys(changes).length
 
   const relationChanges = !Object.keys(relations).some(
@@ -98,7 +98,7 @@ export function areChanges(changes: object, relations: object) {
 
 export function relationsSeparator(data: any) {
   const keys: string[] = []
-  const relations: object[] = []
+  const relations: Record<string, any[]> = {};
 
   Object.entries(data).forEach(([k, v]: [string, unknown]) => {
     if (Array.isArray(v)) {

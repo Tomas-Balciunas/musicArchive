@@ -1,13 +1,12 @@
 import { Artist, Band } from '@server/entities'
-import { Album } from '@server/entities/album'
 import {
-  ArtistBare,
-  ArtistFull,
-  ArtistInsert,
-  ArtistUpdate,
+  type ArtistBare,
+  type ArtistFull,
+  type ArtistInsert,
+  type ArtistUpdate,
 } from '@server/entities/artist'
 import { TRPCError } from '@trpc/server'
-import { DataSource, Repository } from 'typeorm'
+import { DataSource } from 'typeorm'
 
 export async function updateArtist(
   db: DataSource,
