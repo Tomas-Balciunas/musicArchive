@@ -1,34 +1,33 @@
-import { type AlbumBare } from '@server/entities/album'
-import { type ArtistBare } from '@server/entities/artist'
 import {
-  type EntityTypeCreate,
+  type EntitiesOfCreate,
   RequestCreate,
-  inputCreateSchema,
+  type CreateEntityReturns,
+  reqCreateSchema,
 } from '@server/entities/request/create'
 import { createAlbum } from '@server/modules/album/services'
 import { createArtist } from '@server/modules/artist/services'
 import { authProcedure } from '@server/trpc/procedures'
 import { DataSource } from 'typeorm'
-
-type EntityReturn = {
-  ALBUM: AlbumBare
-  ARTIST: ArtistBare
-}
+import { getRequest } from '../../services'
 
 const entities: {
-  [K in EntityTypeCreate]: (
+  [K in EntitiesOfCreate]: (
     db: DataSource,
     data: any
-  ) => Promise<EntityReturn[K]>
+  ) => Promise<CreateEntityReturns[K]>
 } = {
   ALBUM: createAlbum,
   ARTIST: createArtist,
 }
 
 export default authProcedure
-  .input(inputCreateSchema)
+  .input(reqCreateSchema.pick({ id: true, entity: true }))
   .mutation(async ({ input, ctx: { db } }) => {
-    const { id, entity, ...data } = input
+    const { id, entity } = input
+    const repo = db.getRepository(RequestCreate)
+    const request = await getRequest<RequestCreate>(repo, id)
+
+    const data = JSON.parse(request.data)
 
     const createdData = await entities[entity](db, data)
 

@@ -1,21 +1,27 @@
 import { z } from 'zod'
-import {
-  Entity,
-} from 'typeorm'
+import { Entity } from 'typeorm'
 import { validates } from '@server/utils/validation'
-import { albumInsertSchema } from '@server/entities/album/index'
-import { artistInsertSchema } from '@server/entities/artist'
+import { type AlbumApproved, albumInsertSchema } from '@server/entities/album/index'
+import { type ArtistBare, artistInsertSchema } from '@server/entities/artist'
 import { RequestBase, entities } from '../base'
 
 @Entity()
 export class RequestCreate extends RequestBase {}
 
-export const entityCreateSchema = z.union([entities.shape.album, entities.shape.artist])
+export const entitiesOfCreateSchema = z.union([
+  entities.shape.album,
+  entities.shape.artist,
+])
 
-export const reqSchema = validates<RequestCreate>().with({
+export type CreateEntityReturns = {
+  ALBUM: AlbumApproved
+  ARTIST: ArtistBare
+}
+
+export const reqCreateSchema = validates<RequestCreate>().with({
   id: z.number().int().positive(),
   info: z.string().min(1),
-  entity: entityCreateSchema,
+  entity: entitiesOfCreateSchema,
   data: z.string().min(1),
   userId: z.number().int().positive(),
   createdAt: z.date(),
@@ -23,26 +29,17 @@ export const reqSchema = validates<RequestCreate>().with({
   status: z.enum(['pending', 'approved', 'rejected']),
 })
 
-const dataSchema = z.union([
-  z.object({ entity: z.literal('ALBUM') }).merge(albumInsertSchema),
-  z.object({ entity: z.literal('ARTIST') }).merge(artistInsertSchema),
-])
-
-export const inputCreateSchema = reqSchema
-  .pick({
-    id: true,
-    entity: true,
-  })
-  .and(dataSchema)
-
-export const insertCreateSchema = reqSchema
+export const insertCreateSchema = reqCreateSchema
   .pick({
     entity: true,
     info: true,
   })
   .and(
-    dataSchema,
+    z.union([
+      z.object({ entity: z.literal('ALBUM') }).merge(albumInsertSchema),
+      z.object({ entity: z.literal('ARTIST') }).merge(artistInsertSchema),
+    ])
   )
 
-export type EntityTypeCreate = z.infer<typeof entityCreateSchema>
+export type EntitiesOfCreate = z.infer<typeof entitiesOfCreateSchema>
 export type InsertCreate = z.infer<typeof insertCreateSchema>

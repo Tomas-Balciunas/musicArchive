@@ -6,26 +6,42 @@ import { RequestCreate, User } from '@server/entities'
 import router from '..'
 
 const createCaller = createCallerFactory(router)
+const db = await createTestDatabase()
+const user = await db.getRepository(User).save(fakeUser())
+const { get } = createCaller(authContext({ db }, user))
 
-it('should get a create request', async () => {
+it('should get an artist create request', async () => {
   const entity = 'ARTIST'
   const data = {
     name: 'John',
-    birth: null,
   }
 
   const dataJson = JSON.stringify(data)
 
-  const db = await createTestDatabase()
-  const user = await db.getRepository(User).save(fakeUser())
   const req = await db
     .getRepository(RequestCreate)
     .save(fakeRequest({ data: dataJson, userId: user.id, entity }))
 
-  const { get } = createCaller(authContext({ db }, user))
+  const response = await get(req.id)
+
+  expect(response).toMatchObject({ ...req, data, userId: user.id })
+  expect(response.data).toMatchObject(data)
+})
+
+it('should get an album create request', async () => {
+  const entity = 'ALBUM'
+  const data = {
+    title: 'Album',
+  }
+
+  const dataJson = JSON.stringify(data)
+
+  const req = await db
+    .getRepository(RequestCreate)
+    .save(fakeRequest({ data: dataJson, userId: user.id, entity }))
 
   const response = await get(req.id)
 
-  expect(response).toMatchObject({...req, data, userId: user.id})
+  expect(response).toMatchObject({ ...req, data, userId: user.id })
   expect(response.data).toMatchObject(data)
 })

@@ -1,22 +1,11 @@
-import { ARTIST_NOT_FOUND } from '@server/consts'
-import { Artist, artistSchema } from '@server/entities/artist'
+import { artistSchema } from '@server/entities/artist'
 import { publicProcedure } from '@server/trpc'
-import { TRPCError } from '@trpc/server'
+import { getArtist } from '../services'
 
 export default publicProcedure
   .input(artistSchema.shape.id)
-  .query(async ({ input: artistId, ctx: { db } }) => {
-    const artist = await db.getRepository(Artist).findOne({
-      relations: { bands: true, albums: true },
-      where: { id: artistId },
-    })
-
-    if (!artist) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: ARTIST_NOT_FOUND,
-      })
-    }
+  .query(async ({ input: id, ctx: { db } }) => {
+    const artist = await getArtist(id, db)
 
     return artist
   })

@@ -28,7 +28,7 @@ export class Post {
   @ManyToOne(() => User, (user) => user.posts)
   user: User
 
-  @ManyToOne(() => Band, {
+  @ManyToOne(() => Band, (band) => band.posts, {
     onDelete: 'CASCADE',
   })
   @JoinTable()

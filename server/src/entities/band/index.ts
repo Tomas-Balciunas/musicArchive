@@ -49,6 +49,7 @@ export class Band extends BandClean {
 }
 
 export type BandBare = BandClean
+export type BandMinimal = Pick<BandClean, 'id' | 'name'>
 export type BandFull = Band
 export type BandApproved = Omit<BandFull, 'albums' | 'posts'>
 

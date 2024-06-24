@@ -4,6 +4,7 @@ import BandPendingList from '@/components/requests/BandPendingList.vue'
 import AlbumCreateList from '@/components/requests/AlbumCreateList.vue';
 import ArtistCreateList from '@/components/requests/ArtistCreateList.vue';
 import AlbumUpdateList from '@/components/requests/AlbumUpdateList.vue';
+import ArtistUpdateList from '@/components/requests/ArtistUpdateList.vue';
 </script>
 
 <template>
@@ -11,6 +12,8 @@ import AlbumUpdateList from '@/components/requests/AlbumUpdateList.vue';
 <AlbumUpdateList></AlbumUpdateList>
   Band updates:
   <BandUpdateList></BandUpdateList>
+  Artist updates:
+<ArtistUpdateList></ArtistUpdateList>
   Pending new bands:
   <BandPendingList></BandPendingList>
   Pending new albums:

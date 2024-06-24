@@ -1,7 +1,6 @@
 import { Album, Band } from '@server/entities'
 import { Artist, artistSearchSchema } from '@server/entities/artist'
 import { authProcedure } from '@server/trpc/procedures'
-import { TRPCError } from '@trpc/server'
 import { ILike, In, Not } from 'typeorm'
 
 export default authProcedure
@@ -46,13 +45,14 @@ export default authProcedure
         return result
       }
 
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Unable to retrieve artists',
-      })
+      return 0
     }
 
     const currentArtists = await getCurrentArtists()
+
+    if (!currentArtists) {
+      return []
+    }
 
     const currentArtistList = currentArtists.flatMap((entity) =>
       entity.artists.map((artist) => artist.id)
@@ -60,7 +60,7 @@ export default authProcedure
 
     const foundArtists = await db.getRepository(Artist).find({
       where: { name: ILike(`%${name}%`), id: Not(In(currentArtistList)) },
-      take: 10
+      take: 10,
     })
 
     return foundArtists

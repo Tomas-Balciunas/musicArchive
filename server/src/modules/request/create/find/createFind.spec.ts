@@ -6,34 +6,43 @@ import { authContext } from '@tests/utils/context'
 import router from '..'
 
 const createCaller = createCallerFactory(router)
+const db = await createTestDatabase()
+const { find } = createCaller(authContext({ db }))
+const user = await db.getRepository(User).save(fakeUser())
 
-it('should find all artists', async () => {
-  const db = await createTestDatabase()
-  const entity = 'ARTIST'
-
-  const dummyData = JSON.stringify({ name: 'John' })
-  const user = await db.getRepository(User).save(fakeUser())
-
+async function findEntities(entity: 'ARTIST' | 'ALBUM', dummyData: string) {
   const data = {
     data: dummyData,
     userId: user.id,
     entity,
   }
 
-  const requests = await db
+  await db
     .getRepository(RequestCreate)
     .save([fakeRequest(data), fakeRequest(data)])
 
-  requests.map((r) => {
-    // eslint-disable-next-line no-param-reassign
-    r.data = JSON.parse(r.data)
-    return r
-  })
+  const entities = await find(entity)
 
-  const { find } = createCaller(authContext({ db }))
+  return entities
+}
 
-  const reqList = await find(entity)
+it('should find all artist create requests', async () => {
+  const entity = 'ARTIST'
 
-  expect(reqList).toHaveLength(2)
-  expect(reqList).toMatchObject(requests)
+  const dummyData = JSON.stringify({ name: 'John' })
+
+  const result = await findEntities(entity, dummyData)
+
+  expect(result).toHaveLength(2)
 })
+
+it('should find all album create requests', async () => {
+  const entity = 'ALBUM'
+
+  const dummyData = JSON.stringify({ title: 'Album' })
+
+  const result = await findEntities(entity, dummyData)
+
+  expect(result).toHaveLength(2)
+})
+

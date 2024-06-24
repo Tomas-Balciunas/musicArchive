@@ -4,7 +4,7 @@ import { type BandFull, type BandUpdate } from '@server/entities/band'
 import { getAlbum } from '@server/modules/album/services'
 import { getArtist } from '@server/modules/artist/services'
 import { getBand } from '@server/modules/band/services'
-import { type EntityTypeUpdate } from '@server/shared/entities'
+import { type EntitiesOfUpdate } from '@server/shared/entities'
 import { TRPCError } from '@trpc/server'
 import {
   DataSource,
@@ -14,6 +14,15 @@ import {
 } from 'typeorm'
 
 type EntityWithId = { id: number }
+type EntityReturns = {
+  [K in EntitiesOfUpdate]: K extends 'BAND'
+    ? BandFull
+    : K extends 'ALBUM'
+      ? AlbumFull
+      : K extends 'ARTIST'
+        ? ArtistFull
+        : never
+}
 
 export async function getRequest<T extends ObjectLiteral & EntityWithId>(
   repo: Repository<T>,
@@ -60,23 +69,13 @@ export function findChanges(
   }
 }
 
-type EntityReturns = {
-  [K in EntityTypeUpdate]: K extends 'BAND'
-    ? BandFull
-    : K extends 'ALBUM'
-      ? AlbumFull
-      : K extends 'ARTIST'
-        ? ArtistFull
-        : never
-}
-
 export async function entityGet(
-  entity: EntityTypeUpdate,
+  entity: EntitiesOfUpdate,
   entityId: number,
   db: DataSource
 ): Promise<EntityReturns[typeof entity]> {
   const entityFetch: {
-    [key in EntityTypeUpdate]: (
+    [key in EntitiesOfUpdate]: (
       id: number,
       db: DataSource
     ) => Promise<EntityReturns[key]>

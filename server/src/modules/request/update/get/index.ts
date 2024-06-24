@@ -4,22 +4,13 @@ import {
   reqUpdateSchema,
 } from '@server/entities/request/update'
 import { authProcedure } from '@server/trpc/procedures'
-import { TRPCError } from '@trpc/server'
-import { entityGet, findChanges, relationsSeparator } from '../../services'
+import { entityGet, findChanges, getRequest, relationsSeparator } from '../../services'
 
 export default authProcedure
   .input(reqUpdateSchema.shape.id)
-  .query(async ({ input: rId, ctx: { db } }) => {
-    const req = await db
-      .getRepository(RequestUpdate)
-      .findOne({ where: { id: rId } })
-
-    if (!req) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Request not found.',
-      })
-    }
+  .query(async ({ input: id, ctx: { db } }) => {
+    const repo = db.getRepository(RequestUpdate)
+    const req = await getRequest<RequestUpdate>(repo, id)
 
     const { data, ...base } = req
     const parsedData = JSON.parse(data)

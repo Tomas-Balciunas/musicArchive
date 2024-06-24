@@ -88,7 +88,7 @@ onBeforeMount(async () => {
           <div class="commentBox">
             <div>
               <span
-                >{{ post.user.username }}
+                >
                 {{ String(post.createdAt).slice(0, 19).replace('T', ' ') }}</span
               >
             </div>

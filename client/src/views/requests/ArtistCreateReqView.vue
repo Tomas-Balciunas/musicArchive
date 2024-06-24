@@ -8,7 +8,7 @@ const rId = Number(route.params.id)
 const r = ref()
 
 const approveChanges = async () => {
-  await trpc.request.create.approve.mutate({ id: rId, entity: 'ARTIST', birth: new Date(r.value.data.birth), name: r.value.data.name })
+  await trpc.request.create.approve.mutate({ id: rId, entity: 'ARTIST' })
 }
 
 const rejectChanges = async () => {
@@ -21,7 +21,6 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  {{ r }}
   <div v-if="r">
     <h3>name: {{ r.data.name }}</h3>
     <h3>birth: {{ r.data.birth ?? 'N/A' }}</h3>

@@ -1,3 +1,4 @@
+import { ARTIST_NOT_FOUND } from '@server/consts'
 import { Artist } from '@server/entities'
 import {
   type ArtistBare,
@@ -15,16 +16,7 @@ export async function updateArtist(
 ): Promise<ArtistBare> {
   await db.getRepository(Artist).update({ id }, data)
 
-  const updatedArtist = await db
-    .getRepository(Artist)
-    .findOne({ where: { id } })
-
-  if (!updatedArtist) {
-    throw new TRPCError({
-      code: 'NOT_FOUND',
-      message: 'Updated artist not found.'
-    })
-  }
+  const updatedArtist = await getArtist(id, db)
 
   return updatedArtist
 }
@@ -45,6 +37,13 @@ export async function getArtist(
   const artist = (await db.getRepository(Artist).findOne({
     where: { id },
   })) as ArtistFull
+
+  if (!artist) {
+    throw new TRPCError({
+      code: 'NOT_FOUND',
+      message: ARTIST_NOT_FOUND,
+    })
+  }
 
   return artist
 }

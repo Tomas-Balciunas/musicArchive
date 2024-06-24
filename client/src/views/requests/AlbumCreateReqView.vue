@@ -2,9 +2,10 @@
 import { tryCatch } from '@/composables'
 import { trpc } from '@/trpc'
 import { onBeforeMount, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
+const router = useRouter()
 const rId = Number(route.params.id)
 const r = ref()
 const b = ref()
@@ -26,6 +27,8 @@ const approveChanges = async () => {
       songs: r.value.data.songs,
       entity: r.value.entity,
     })
+    
+    router.push({name: 'Requests'})
   })
 }
 
@@ -40,7 +43,6 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  {{ r }}
   <div v-if="r && b">
     <h2>
       <RouterLink :to="{ name: 'Band', params: { id: b.id } }">{{ b.name }}</RouterLink>

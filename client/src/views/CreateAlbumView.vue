@@ -87,9 +87,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  {{ albumForm }}
-  {{ artistList }}
-  {{ songList }}
+  {{ band }}
   <div v-if="band">
     <RouterLink :to="{ name: 'Band', params: { id: band.id } }">
       <h4>{{ band.name }}</h4>

@@ -1,6 +1,7 @@
 import { BAND_NOT_FOUND } from '@server/consts'
 import { Artist, Band } from '@server/entities'
 import {
+  type BandMinimal,
   type BandApproved,
   type BandFull,
   type BandUpdate,
@@ -28,27 +29,15 @@ export async function updateBand(
     }
 
     if (artists.length) {
-      const band = await bandRepo.findOne({
-        where: { id },
-        relations: ['artists'],
+      const band = await getBand(id, db)
+
+      const idList = data.artists.map((a) => a.id)
+
+      const list = await artistRepo.find({
+        where: { id: In(idList) },
       })
 
-      if (!band) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: BAND_NOT_FOUND,
-        })
-      }
-
-      if (artists.length) {
-        const idList = data.artists.map((a) => a.id)
-
-        const list = await artistRepo.find({
-          where: { id: In(idList) },
-        })
-
-        list.forEach((a) => band.artists.push(a))
-      }
+      list.forEach((a) => band.artists.push(a))
 
       await bandRepo.save(band)
     }
@@ -61,25 +50,19 @@ export async function updateBand(
     await queryRunner.release()
   }
 
-  const updatedBand = await bandRepo.findOne({
-    where: { id },
-    relations: ['artists'],
-  })
-
-  if (!updatedBand) {
-    throw new TRPCError({
-      code: 'NOT_FOUND',
-      message: BAND_NOT_FOUND,
-    })
-  }
+  const updatedBand = await getBand(id, db, ['artists'])
 
   return updatedBand
 }
 
-export async function getBand(id: number, db: DataSource): Promise<BandFull> {
+export async function getBand(
+  id: number,
+  db: DataSource,
+  relations: string[] = ['artists', 'albums', 'posts']
+): Promise<BandFull> {
   const band = (await db.getRepository(Band).findOne({
     where: { id },
-    relations: ['artists', 'albums', 'posts']
+    relations,
   })) as BandFull
 
   if (!band) {
@@ -90,4 +73,32 @@ export async function getBand(id: number, db: DataSource): Promise<BandFull> {
   }
 
   return band
+}
+
+export async function getBandMinimal(
+  id: number,
+  db: DataSource
+): Promise<BandMinimal> {
+  const band = (await db.getRepository(Band).findOne({
+    where: { id },
+    select: { id: true, name: true },
+  })) as BandMinimal
+
+  if (!band) {
+    throw new TRPCError({
+      code: 'NOT_FOUND',
+      message: BAND_NOT_FOUND,
+    })
+  }
+
+  return band
+}
+
+export async function findBandsMinimal(db: DataSource): Promise<BandMinimal[]> {
+  const bands: BandMinimal[] = await db.getRepository(Band).find({
+    select: { id: true, name: true },
+    where: { pending: false }
+  })
+
+  return bands
 }

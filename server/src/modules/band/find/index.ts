@@ -1,14 +1,9 @@
-import { Band, type BandBare } from '@server/entities/band'
+import { type BandMinimal  } from '@server/entities/band'
 import { publicProcedure } from '@server/trpc'
+import { findBandsMinimal } from '../services'
 
 export default publicProcedure.query(async ({ ctx: { db } }) => {
-  const bands = (await db
-    .getRepository(Band)
-    .find({
-      where: { pending: false },
-      order: { id: 'ASC' },
-      select: { id: true, name: true, description: true },
-    })) as BandBare[]
+  const bands: BandMinimal[] = await findBandsMinimal(db)
 
   return bands
 })

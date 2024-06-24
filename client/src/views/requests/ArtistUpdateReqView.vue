@@ -23,7 +23,6 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  {{ r }}
   <div v-if="r && a">
     <h1>
       <RouterLink :to="{ name: 'Artist', params: { id: a.id } }">{{ a.name }}</RouterLink>

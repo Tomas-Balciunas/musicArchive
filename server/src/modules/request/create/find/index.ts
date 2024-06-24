@@ -1,21 +1,23 @@
 import {
   RequestCreate,
-  entityCreateSchema,
+  entitiesOfCreateSchema,
 } from '@server/entities/request/create'
 import { authProcedure } from '@server/trpc/procedures'
 
 export default authProcedure
-  .input(entityCreateSchema)
+  .input(entitiesOfCreateSchema)
   .query(async ({ input: entity, ctx: { db } }) => {
     const foundRequests = await db
       .getRepository(RequestCreate)
-      .find({ where: { entity, status: 'pending' } })
+      .find({
+        where: { entity, status: 'pending' },
+        select: { id: true, data: true, createdAt: true },
+      })
 
-    foundRequests.map((r) => {
-      // eslint-disable-next-line no-param-reassign
-      r.data = JSON.parse(r.data)
-      return r
+    const parsedData = foundRequests.map((r) => {
+      const parsed = JSON.parse(r.data)
+      return { ...r, data: parsed }
     })
 
-    return foundRequests
+    return parsedData
   })

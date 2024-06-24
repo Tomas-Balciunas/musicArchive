@@ -1,9 +1,9 @@
 import { z } from 'zod'
 import { Column, Entity } from 'typeorm'
 import { validates } from '@server/utils/validation'
-import { bandUpdateSchema } from '@server/entities/band'
-import { albumUpdateSchema } from '@server/entities/album'
-import { artistUpdateSchema } from '@server/entities/artist'
+import { type BandApproved, bandUpdateSchema } from '@server/entities/band'
+import { type AlbumApproved, albumUpdateSchema } from '@server/entities/album'
+import { type ArtistBare, artistUpdateSchema } from '@server/entities/artist'
 import { RequestBase, entities } from '../base'
 
 @Entity()
@@ -18,11 +18,11 @@ export const entityUpdateSchema = z.union([
   entities.shape.band,
 ])
 
-const dataSchema = z.union([
-  z.object({ entity: z.literal('ALBUM') }).merge(albumUpdateSchema),
-  z.object({ entity: z.literal('ARTIST') }).merge(artistUpdateSchema),
-  z.object({ entity: z.literal('BAND') }).merge(bandUpdateSchema),
-])
+export type UpdateEntityReturns = {
+  ALBUM: AlbumApproved
+  ARTIST: ArtistBare
+  BAND: BandApproved
+}
 
 export const reqUpdateSchema = validates<RequestUpdate>().with({
   id: z.number().int().positive(),
@@ -36,20 +36,19 @@ export const reqUpdateSchema = validates<RequestUpdate>().with({
   status: z.enum(['pending', 'approved', 'rejected']),
 })
 
-export const approveUpdateSchema = reqUpdateSchema
-  .pick({
-    entity: true,
-    entityId: true,
-  })
-  .and(dataSchema)
-
 export const insertUpdateSchema = reqUpdateSchema
   .pick({
     entity: true,
     entityId: true,
     info: true,
   })
-  .and(dataSchema)
+  .and(
+    z.union([
+      z.object({ entity: z.literal('ALBUM') }).merge(albumUpdateSchema),
+      z.object({ entity: z.literal('ARTIST') }).merge(artistUpdateSchema),
+      z.object({ entity: z.literal('BAND') }).merge(bandUpdateSchema),
+    ])
+  )
 
-export type EntityTypeUpdate = z.infer<typeof entityUpdateSchema>
+export type EntitiesOfUpdate = z.infer<typeof entityUpdateSchema>
 export type InsertUpdate = z.infer<typeof insertUpdateSchema>

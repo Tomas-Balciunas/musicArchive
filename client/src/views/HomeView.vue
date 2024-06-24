@@ -1,14 +1,15 @@
 <script lang="ts" setup>
 import { onBeforeMount, ref } from 'vue'
-import type { BandBare } from '@mono/server/src/shared/entities'
+import type { BandMinimal } from '@mono/server/src/shared/entities'
 import { trpc } from '@/trpc'
 import { isLoggedIn } from '@/stores/user'
 
-const bands = ref<BandBare[]>([])
+const bands = ref<BandMinimal[]>([])
 
 onBeforeMount(async () => {
   bands.value = await trpc.band.find.query()
 })
+
 </script>
 
 <template>
@@ -35,10 +36,6 @@ onBeforeMount(async () => {
             <v-card-title>
               <span>{{ b.name }}</span>
             </v-card-title>
-
-            <v-card-subtitle>
-              {{ b.description }}
-            </v-card-subtitle>
           </v-card-item>
         </v-card></RouterLink>
     </div>

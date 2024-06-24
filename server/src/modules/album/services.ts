@@ -2,7 +2,6 @@ import { ALBUM_NOT_FOUND } from '@server/consts'
 import { Song } from '@server/entities'
 import {
   Album,
-  type AlbumBare,
   type AlbumFull,
   type AlbumUpdate,
   type AlbumInsert,
@@ -16,7 +15,7 @@ import { DataSource, In } from 'typeorm'
 export async function createAlbum(
   db: DataSource,
   data: AlbumInsert
-): Promise<AlbumBare> {
+): Promise<AlbumApproved> {
   const { artists, songs, ...form } = data
 
   const artistRepo = db.getRepository(Artist)
@@ -63,17 +62,7 @@ export async function updateAlbum(
     }
 
     if (artists.length || songs.length) {
-      const album = await albumRepo.findOne({
-        where: { id },
-        relations: ['artists'],
-      })
-
-      if (!album) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Album not found.',
-        })
-      }
+      const album = await getAlbum(id, db, ['artists'])
 
       if (artists.length) {
         const idList = data.artists.map((a) => a.id)
@@ -86,9 +75,9 @@ export async function updateAlbum(
       }
 
       if (songs.length) {
-        const withAlbumID: SongInsert[] = songs.map((s) => ({ ...s, album }))
+        const withAlbum: SongInsert[] = songs.map((s) => ({ ...s, album }))
 
-        withAlbumID.forEach(async (s) => {
+        withAlbum.forEach(async (s) => {
           await songRepo.save(s)
         })
       }
@@ -104,17 +93,7 @@ export async function updateAlbum(
     await queryRunner.release()
   }
 
-  const updatedAlbum = await albumRepo.findOne({
-    where: { id },
-    relations: ['artists', 'songs'],
-  })
-
-  if (!updatedAlbum) {
-    throw new TRPCError({
-      code: 'NOT_FOUND',
-      message: 'Album not found.',
-    })
-  }
+  const updatedAlbum = await getAlbum(id, db, ['artists', 'songs'])
 
   return updatedAlbum
 }
@@ -124,18 +103,22 @@ export async function albumExists(db: DataSource, data: AlbumInsert) {
     .getRepository(Album)
     .findOne({ where: { bandId: data.bandId, title: data.title } })
 
-    if (album) {
-      throw new TRPCError({
-        code: 'BAD_REQUEST',
-        message: `Album "${data.title}" already belongs to this band.`,
-      })
-    }
+  if (album) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: `Album "${data.title}" already belongs to this band.`,
+    })
+  }
 }
 
-export async function getAlbum(id: number, db: DataSource): Promise<AlbumFull> {
+export async function getAlbum(
+  id: number,
+  db: DataSource,
+  relations: string[] = ['artists', 'band', 'reviews', 'songs']
+): Promise<AlbumFull> {
   const album = (await db.getRepository(Album).findOne({
     where: { id },
-    relations: ['artists', 'band', 'reviews', 'songs']
+    relations,
   })) as AlbumFull
 
   if (!album) {

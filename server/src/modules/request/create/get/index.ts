@@ -1,9 +1,9 @@
-import { RequestCreate, reqSchema } from '@server/entities/request/create'
+import { RequestCreate, reqCreateSchema } from '@server/entities/request/create'
 import { authProcedure } from '@server/trpc/procedures'
 import { getRequest } from '../../services'
 
 export default authProcedure
-  .input(reqSchema.shape.id)
+  .input(reqCreateSchema.shape.id)
   .query(async ({ input: id, ctx: { db } }) => {
     const repo = db.getRepository(RequestCreate)
     const r = await getRequest<RequestCreate>(repo, id)

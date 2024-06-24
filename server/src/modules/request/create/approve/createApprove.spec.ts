@@ -54,7 +54,6 @@ it('should approve album create', async () => {
   const { title, released, bandId, ...relations } = (await approve({
     id: req.id,
     entity,
-    ...data,
   })) as AlbumApproved
 
   expect({ title, released, bandId }).toEqual({
