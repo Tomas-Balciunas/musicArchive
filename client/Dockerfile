@@ -24,9 +24,6 @@ COPY --from=builder /app/client/dist /usr/share/nginx/html
 
 ENV NGINX_ENVSUBST_OUTPUT_DIR '/etc/nginx/conf.d'
 
-RUN ls -a
-
-COPY client/nginx/default.conf.template /etc/nginx/templates/default.conf.template
 
 EXPOSE 80
 
