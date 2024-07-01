@@ -25,16 +25,26 @@ jobs:
           credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
           export_default_credentials: true
 
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v1'
-        with:
-          project_id: '${{ env.PROJECT_ID }}'
+      - name: Build and push client Docker image
+        run: |
+          gcloud builds submit --tag gcr.io/${{ secrets.PROJECT_ID }}/client ./client
 
-      - name: 'Docker auth'
-        run: |-
-          gcloud auth configure-docker ${{ env.GAR_LOCATION }}-docker.pkg.dev
+      - name: Build and push server Docker image
+        run: |
+          gcloud builds submit --tag gcr.io/${{ secrets.PROJECT_ID }}/server ./server
 
-      - name: 'Build and push container'
-        run: |-
-          docker build -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.APP }}/${{ env.APP }}:${{ github.sha }}" ./app
-          docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.APP }}/${{ env.APP }}:${{ github.sha }}"
+      - name: Deploy client to Cloud Run
+        run: |
+          gcloud run deploy client-service \
+            --image gcr.io/${{ secrets.PROJECT_ID }}/client \
+            --region ${{ secrets.REGION }} \
+            --platform managed \
+            --allow-unauthenticated
+
+      - name: Deploy server to Cloud Run
+        run: |
+          gcloud run deploy server-service \
+            --image gcr.io/${{ secrets.PROJECT_ID }}/server \
+            --region ${{ secrets.REGION }} \
+            --platform managed \
+            --allow-unauthenticated
