@@ -3,8 +3,8 @@ FROM node:18.19.0-alpine3.18 AS builder
 WORKDIR /
 
 COPY ./package*.json .
-COPY ./client/package*.json client/
-COPY ./server/package*.json server/
+COPY client/package*.json ./
+COPY server/package*.json ./
 RUN npm ci
 
 COPY . .
