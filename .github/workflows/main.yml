@@ -31,13 +31,13 @@ jobs:
 
       - name: 'Build and push client container'
         run: |-
-          docker build -t "${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/app/${{ env.APP }}:$CLIENT_IMAGE_TAG" ./app/client
-          docker push "${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/app/$CLIENT_IMAGE_TAG"
+          docker build -t gcr.io/${{ secrets.PROJECT_ID }}/client:${{ env.CLIENT_IMAGE_TAG }} ./client
+          docker push gcr.io/${{ secrets.PROJECT_ID }}/client:${{ env.CLIENT_IMAGE_TAG }}
 
       - name: 'Build and push server container'
         run: |-
-          docker build -t "${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/app$SERVER_IMAGE_TAG" ./app/server
-          docker push "${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/app$SERVER_IMAGE_TAG"
+          docker build -t gcr.io/${{ secrets.PROJECT_ID }}/server:${{ env.SERVER_IMAGE_TAG }} ./server
+          docker push gcr.io/${{ secrets.PROJECT_ID }}/server:${{ env.SERVER_IMAGE_TAG }}
 
       - name: Deploy client to Cloud Run
         run: |
