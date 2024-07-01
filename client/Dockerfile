@@ -1,6 +1,6 @@
 FROM node:18.19.0-alpine3.18 AS builder
 
-WORKDIR /app
+WORKDIR /
 
 COPY package*.json ./
 COPY client/package*.json ./client/
@@ -12,7 +12,7 @@ COPY . .
 ARG VITE_API_ORIGIN
 ARG VITE_API_PATH
 
-WORKDIR /app/client
+WORKDIR /client
 
 RUN npm run build
 
@@ -20,7 +20,7 @@ FROM nginx:1.25.3-alpine3.18
 
 RUN rm /usr/share/nginx/html/* -rf
 
-COPY --from=builder /app/client/dist /usr/share/nginx/html
+COPY --from=builder /client/dist /usr/share/nginx/html
 
 ENV NGINX_ENVSUBST_OUTPUT_DIR '/etc/nginx/conf.d'
 
