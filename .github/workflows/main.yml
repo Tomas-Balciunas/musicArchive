@@ -25,13 +25,15 @@ jobs:
           credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
           export_default_credentials: true
 
-      - name: Build and push client Docker image
-        run: |
-          gcloud builds submit --tag gcr.io/${{ secrets.PROJECT_ID }}/client ./client
+      - name: 'Build and push client container'
+        run: |-
+          docker build -t "${{ env.LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/app/${{ env.APP }}:$CLIENT_IMAGE_TAG" ./app/client
+          docker push "${{ env.LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/app/$CLIENT_IMAGE_TAG"
 
-      - name: Build and push server Docker image
-        run: |
-          gcloud builds submit --tag gcr.io/${{ secrets.PROJECT_ID }}/server ./server
+      - name: 'Build and push server container'
+        run: |-
+          docker build -t "${{ env.LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/app/$SERVER_IMAGE_TAG" ./app/server
+          docker push "${{ env.LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/app/$SERVER_IMAGE_TAG"
 
       - name: Deploy client to Cloud Run
         run: |
