@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { signup } from '@/stores/user'
+import { useUserStore } from '@/stores/user'
 import { useNotifStore } from '@/stores/notif'
 import { SIGNUP_SUCCESS } from '@/consts'
 import { useRouter } from 'vue-router'
@@ -14,10 +14,11 @@ const userForm = ref({
 
 const router = useRouter()
 const notifStore = useNotifStore()
+const userStore = useUserStore()
 
 async function submitSignup() {
   tryCatch(async () => {
-    await signup(userForm.value)
+    await userStore.signup(userForm.value)
     notifStore.showNotif(SIGNUP_SUCCESS)
     router.push({ name: 'Login' })
   })

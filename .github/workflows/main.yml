@@ -1,4 +1,4 @@
-name: Test
+name: Test, Build and Deploy
 
 on: push
 
@@ -15,7 +15,6 @@ jobs:
       postgres:
         image: postgres:16.1-alpine
         env:
-          # Postgres will create a database with the following credentials
           POSTGRES_USER: turing
           POSTGRES_PASSWORD: turing
           POSTGRES_DB: testdb
@@ -52,40 +51,21 @@ jobs:
       - name: Test client (unit)
         run: npm run test:unit -w=client
 
-      # Add more browsers here if you want to test on more/different browsers
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
 
-      # Testing the entire application with a running API server.
-      # We must start the server first. & at the end of the command
-      # makes it run in the background. While it is starting up,
-      # we will continue with other steps.
       - name: Start server for E2E tests
         run: npm run dev -w=server &
         env:
-          # Pass the same credentials to our server environment variables, just like
-          # we would if we had an .env file.
           DB_USER: turing
           DB_PASSWORD: turing
           DB_NAME: testdb
           DB_HOST: localhost
-
-          # port to start the server on
           PORT: 3000
 
-      # Build the front end for E2E tests. We are building it
-      # instead of running it in dev mode because there is some
-      # differences between dev mode and production mode front
-      # end code.
       - name: Build front end for E2E tests
         run: npm run build -w=client
 
-      # Just to make sure that our server is up and running before
-      # we start our E2E tests, we will use a health check action
-      # which will make a request to the server and wait for it to
-      # respond with a non-failing status code.
-      # This assumes we have a public /api/health endpoint in our
-      # Express server that returns a non-failing status code.
       - name: Wait for server to startup
         uses: Jtalk/url-health-check-action@v4
         with:
@@ -96,13 +76,46 @@ jobs:
       - name: Test client E2E
         run: npm run test:e2e -w=client
 
-      # Playwright generates a report of the E2E tests. We will
-      # upload that report as an artifact so that we can download
-      # it later from the GitHub Actions UI. This will help us
-      # debug any issues that occured in E2E tests.
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
           path: client/playwright-report/
           retention-days: 7
+
+  build-deploy:
+    needs: test
+    runs-on: ubuntu-22.04
+    if: github.ref == 'refs/heads/main'
+    env:
+      API_ORIGIN: ${{ vars.API_ORIGIN }}
+      API_PATH: /api/v1/trpc
+      CLIENT_IMAGE_TAG: client-${{ github.sha }}
+      SERVER_IMAGE_TAG: server-${{ github.sha }}
+    steps:
+     - name: 'Checkout'
+       uses: 'actions/checkout@v4'
+
+
+     - name: 'Google auth'
+       id: 'auth'
+       uses: 'google-github-actions/auth@v1'
+       with:
+         workload_identity_provider: '${{ secrets.WIF_PROVIDER }}'
+         service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}'
+
+      - name: 'Set up Cloud SDK'
+       uses: 'google-github-actions/setup-gcloud@v1'
+       with:
+         project_id: '${{ env.PROJECT_ID }}'
+
+     - name: 'Docker auth'
+       run: |-
+         gcloud auth configure-docker ${{ env.GAR_LOCATION }}-docker.pkg.dev
+
+      - name: 'Build and push container'
+       run: |-
+         docker build -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.APP }}/${{ env.APP }}:${{ github.sha }}" ./app
+         docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.APP }}/${{ env.APP }}:${{ github.sha }}"
+
+      

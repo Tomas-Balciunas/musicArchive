@@ -3,7 +3,6 @@ import { trpc } from '@/trpc'
 import { useRoute } from 'vue-router'
 import { onBeforeMount, ref } from 'vue'
 import { type AlbumFull } from '@mono/server/src/shared/entities'
-import { isLoggedIn } from '@/stores/user'
 
 const route = useRoute()
 const album = ref<AlbumFull>()
@@ -71,7 +70,7 @@ onBeforeMount(async () => {
       <h5 v-else>No reviews found</h5>
     </div>
     <div class="d-flex"></div>
-    <div v-if="isLoggedIn">
+    <div >
       <RouterLink :to="{ name: 'ReviewCreate', params: { id: albumId } }">
         <div class="gap-3">
           <v-btn type="submit" color="#C62828">Write a review</v-btn>

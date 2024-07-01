@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { login } from '@/stores/user'
+import { useUserStore } from '@/stores/user'
 import { tryCatch } from '@/composables'
 
 const router = useRouter()
+const userStore = useUserStore()
 
 const userForm = ref({
   email: '',
@@ -13,7 +14,7 @@ const userForm = ref({
 
 const submitLogin = () => {
   tryCatch(async () => {
-    await login(userForm.value)
+    await userStore.login(userForm.value)
 
     router.push({ name: 'Home' })
   })

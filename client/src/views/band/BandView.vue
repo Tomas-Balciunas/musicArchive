@@ -7,8 +7,9 @@ import type {
 } from '@mono/server/src/shared/entities'
 import { useRoute, useRouter } from 'vue-router'
 import { makeInsert, tryCatch } from '@/composables'
-import { isLoggedIn } from '@/stores/user'
+import { useUserStore } from '@/stores/user'
 
+const userStore = useUserStore()
 const band = ref<BandFull>()
 const route = useRoute()
 const router = useRouter()
@@ -101,7 +102,7 @@ onBeforeMount(async () => {
       <h5 v-else>No comments found.</h5>
     </div>
 
-    <div v-if="!band.pending && isLoggedIn" class="d-flex">
+    <div v-if="!band.pending && userStore.isLoggedIn" class="d-flex">
       <div class="borderBox createBox">
         <form @submit.prevent="createComment">
           <p class="text-center">Add user comment</p>

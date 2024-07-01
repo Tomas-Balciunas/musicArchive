@@ -2,7 +2,6 @@
 import { onBeforeMount, ref } from 'vue'
 import type { BandMinimal } from '@mono/server/src/shared/entities'
 import { trpc } from '@/trpc'
-import { isLoggedIn } from '@/stores/user'
 
 const bands = ref<BandMinimal[]>([])
 
@@ -13,18 +12,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <h1>Music archive</h1>
   <div>
-    <div v-if="isLoggedIn">
-      <RouterLink :to="{ name: 'BandCreate' }"
-        ><v-btn color="#C62828">Create a new band</v-btn></RouterLink
-      >
-    </div>
-    <div v-if="isLoggedIn">
-      <RouterLink :to="{ name: 'ArtistCreate' }"
-        ><v-btn color="#C62828">Create a new artist</v-btn></RouterLink
-      >
-    </div>
     <h3>Bands:</h3>
     <div v-if="bands.length">
       <RouterLink

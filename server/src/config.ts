@@ -43,10 +43,7 @@ const schema = z
         // By default, log and synchronize the database schema only for tests and development.
         ssl: z.preprocess(coerceBoolean, z.boolean().default(!isDevTest)),
         logging: z.preprocess(coerceBoolean, z.boolean().default(isDevTest)),
-        synchronize: z.preprocess(
-          coerceBoolean,
-          z.boolean().default(true)
-        ),
+        synchronize: z.preprocess(coerceBoolean, z.boolean().default(true)),
       }),
 
       // in-memory database config
@@ -75,6 +72,7 @@ const config = schema.parse({
     database: env.DB_NAME,
     username: env.DB_USER,
     password: env.DB_PASSWORD,
+    extra: { options: env.ENDPOINT_ID },
     logging: env.DB_LOGGING,
     synchronize: env.DB_SYNC,
   },

@@ -43,6 +43,7 @@ export const userInsertSchema = userSchema.omit({ id: true })
 export type UserInsert = z.infer<typeof userInsertSchema>
 
 export type AuthUser = Pick<User, 'id'>
+export type IdentifierUser = Pick<User, 'username' | 'role'>
 
 export const authUserSchema = validates<AuthUser>().with({
   id: z.number().int().positive(),

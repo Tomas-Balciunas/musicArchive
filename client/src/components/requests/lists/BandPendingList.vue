@@ -13,8 +13,7 @@ onBeforeMount(async () => {
 <template>
   <div v-if="bands">
     <div v-for="b in bands" :key="b.id">
-      <RouterLink :to="{ name: 'Band', params: { id: b.id } }">
-        <v-card hover class="bandList">
+        <v-card hover class="bandList" :to="{ name: 'Band', params: { id: b.id } }">
           <v-card-item>
             <v-card-title>
               <span>{{ b.name }}</span>
@@ -24,7 +23,6 @@ onBeforeMount(async () => {
             </v-card-subtitle>
           </v-card-item>
         </v-card>
-      </RouterLink>
     </div>
   </div>
 </template>

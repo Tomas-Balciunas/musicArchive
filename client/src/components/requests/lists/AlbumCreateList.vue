@@ -11,7 +11,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <div v-if="r">
+  <v-card v-if="r">
     <div v-for="req in r" :key="req.id">
       <RouterLink :to="{ name: 'AlbumCreateReq', params: { id: req.id } }">
         <v-card class="bandList">
@@ -24,5 +24,5 @@ onBeforeMount(async () => {
         </v-card>
       </RouterLink>
     </div>
-  </div>
+  </v-card>
 </template>
