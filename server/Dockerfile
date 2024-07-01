@@ -1,15 +1,15 @@
 FROM node:18.19.0-alpine3.18 AS builder
 
-WORKDIR /
+WORKDIR /app
 
-COPY ./package*.json .
+COPY ../package*.json .
 COPY client/package*.json client/
 COPY server/package*.json server/
 RUN npm ci
 
 COPY server/ server/
 
-WORKDIR /server
+WORKDIR /app/server
 RUN npm run build
 
 EXPOSE 3000

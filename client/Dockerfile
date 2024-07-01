@@ -1,6 +1,6 @@
 FROM node:18.19.0-alpine3.18 AS builder
 
-WORKDIR /
+WORKDIR /app
 
 COPY ../package*.json .
 COPY client/package*.json client/
@@ -12,7 +12,7 @@ COPY . .
 ARG VITE_API_ORIGIN
 ARG VITE_API_PATH
 
-WORKDIR /client
+WORKDIR /app/client
 
 RUN npm run build
 
